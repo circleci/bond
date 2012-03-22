@@ -1,4 +1,4 @@
-(ns bond.core)
+(ns bond.james)
 
 (defn with-spies)
 
