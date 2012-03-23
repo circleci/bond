@@ -25,7 +25,7 @@
 (defmacro with-spy
   "Takes a var pointing at a fn. Rebinds the fn to track call counts"
   [v & body]
-  `(binding [~v (spy ~v)]
+  `(with-redefs [~v (spy ~v)]
      (do ~@body)))
 
 (defmacro with-spy-redef
