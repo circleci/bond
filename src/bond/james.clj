@@ -27,9 +27,12 @@
   (-> f (meta) ::calls (deref)))
 
 (defmacro with-spy
-  "Takes a var pointing at a fn. Modifies the fn to track call counts, but does not change the fn's behavior"
-  [v & body]
-  `(with-redefs [~v (spy ~v)]
+  "Takes a vector of fn vars (vars that resolve to fns). Modifies the
+  fn to track call counts, but does not change the fn's behavior"
+  [vs & body]
+  `(with-redefs ~(->> (mapcat (fn [v]
+                                [v `(spy ~v)]) vs)
+                      (vec))
      (do ~@body)))
 
 (defmacro with-stub
