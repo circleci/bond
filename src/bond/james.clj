@@ -1,9 +1,7 @@
 (ns bond.james)
 
-(defn with-spies)
-
 (defn spy
-  "wrap f, keeping track of its call count and arguments"
+  "wrap f, returning a new fn that keeping track of its call count and arguments"
   [f]
   (let [calls (atom [])
         old-f f]
