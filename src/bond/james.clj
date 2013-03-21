@@ -33,18 +33,12 @@
                       (vec))
      (do ~@body)))
 
-(defn with-stub*
-  "Takes a seq of vars. spys on them, while also redefining them to return nil"
-  [vs f]
-  (let [binding-map (->> vs
-                         (map (fn [v]
-                                   [v (spy (constantly nil))]))
-                         (into {}))]
-    (with-redefs-fn binding-map f)))
-
 (defmacro with-stub
   "Takes a vector of fn vars. Replaces each fn with one that takes any
   number of args and returns nil. Also spies the stubbed-fn"
   [vs & body]
 
-  `(with-stub* ~vs (fn [] ~@body)))
+  `(with-redefs ~(->> (mapcat (fn [v]
+                                [v `(spy (constantly nil))]) vs)
+                      (vec))
+     ~@body))
