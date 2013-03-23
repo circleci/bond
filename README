@@ -3,13 +3,13 @@ Bond
 
 Bond is a spying and stubbing library, primarily intended for tests.
 
-```
-clojure
+```clojure
+
 [bond "0.2.5"]
-```
 
 ```
-clojure
+
+```clojure
 
 (ns test.foo
   (:require '[bond.james :as bond]))
