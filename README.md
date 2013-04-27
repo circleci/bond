@@ -14,11 +14,10 @@ Bond is a spying and stubbing library, primarily intended for tests.
   (:require [bond.james :as bond]))
 
 (defn foo [x] ...)
-(defn bar [y] ...)
 
 (deftest foo-is-called
-  (with-spy [foo bar]
-    (bar)
+  (with-spy [foo]
+    (foo)
     (is (= 1 (-> foo bond/calls count)))))
 ```
 
