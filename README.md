@@ -15,9 +15,12 @@ Bond is a spying and stubbing library, primarily intended for tests.
 
 (defn foo [x] ...)
 
+(defn bar [y]
+   (foo y))
+
 (deftest foo-is-called
   (with-spy [foo]
-    (foo)
+    (bar 2)
     (is (= 1 (-> foo bond/calls count)))))
 ```
 
