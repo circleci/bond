@@ -33,12 +33,21 @@
                       (vec))
      (do ~@body)))
 
-(defmacro with-stub
-  "Takes a vector of fn vars. Replaces each fn with one that takes any
-  number of args and returns nil. Also spies the stubbed-fn"
-  [vs & body]
+(defn- prep-stubs
+  [setup]
+  (cond
+    (vector? setup)
+      (prep-stubs (zipmap setup (repeat nil)))
+    (map? setup)
+      (mapcat (fn [[f r]] [f `(spy (constantly ~r))]) setup)
+    :else
+      (throw (Exception. (str "Unexpected binding: " setup)))))
 
-  `(with-redefs ~(->> (mapcat (fn [v]
-                                [v `(spy (constantly nil))]) vs)
-                      (vec))
+(defmacro with-stub
+  "Can either take a vector of fn vars, or a map of fn vars to return values.
+  Replaces each fn with one that takes any number of args and returns nil or
+  the mapped return value. Also spies the stubbed-fn"
+  [setup & body]
+
+  `(with-redefs ~(vec (prep-stubs setup))
      ~@body))
