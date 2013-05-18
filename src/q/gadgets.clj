@@ -1,4 +1,4 @@
-(ns bond.james)
+(ns q.gadgets)
 
 (defn spy
   "wrap f, returning a new fn that keeping track of its call count and arguments"

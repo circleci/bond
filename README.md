@@ -1,27 +1,52 @@
-Bond
-====
+# Q
 
-Bond is a spying and stubbing library, primarily intended for tests.
+Q provides gadgets for spies, and aims to make testing involving complex
+dependencies easier. It provides helper functions for creating fakes, stubs and
+spies - as well as ways to inspect what was called on them after-the-fact.
 
 ```clojure
 
-[bond "0.2.5"]
+[q "0.1.0"]
 ```
 
 ```clojure
 
 (ns test.foo
-  (:require [bond.james :as bond]))
+  (:require [q.gadgets :as q]))
 
 (defn foo [x] ...)
 (defn bar [y] ...)
 
 (deftest foo-is-called
-  (with-spy [foo bar]
+  (q/with-spy [foo bar]
     (bar)
-    (is (= 1 (-> foo bond/calls count)))))
+    (is (q/called-once bar))))
 ```
 
-Bond provides one main macro, with-spy. It takes a vector of defn vars (vars that resolve to fns). Each var will be redef'd, wrapping the fn to track arguments and call counts. At any point during the scope, you can call (bond/calls f), where f is a spied fn. `calls` returns a seq of maps, one for each call to f. Each map contains the keys :args, a seq of args the fn was called with, and one of :return or :throw.
+Q is based on [Bond](https://github.com/circleci/bond), but with a wider variety of higher-level functions available. Much of the functionality is modelled on [Sinon](http://sinonjs.org/)
 
-Bond also provides with-stub. It works the same as with-spy, but redefines the fn to return (constantly nil), while also spying on it.
+## Spies
+
+### (spy fn) => spied-fn
+Takes a function `fn`, and returns a `spied-fn` that has the same behaviour except it records information about its invocations.
+
+### (with-spy fns & body)
+Takes a vector of function vars `fns` and executes `body` with those functions replaced with spies.
+
+### (calls spied-fn)
+Returns a vector of function invocation maps, representing each call of `fn`. Each map will contain `:args` a vector of the arguments it was called with, and either `:return` for the return value or `:thrown` for the exception thrown.
+
+### (called spied-fn)
+Returns the number of times `fn` was called as an integer.
+
+### (called-once spied-fn)
+Returns true if the function was called once
+
+## Stubs
+
+### (with-stubs fns & body)
+When `fns` is a vector, accepts a list of function vars and executes `body` with those functions replaced with spies that return nil.  
+When `fns` is a map, accepts a mapping of function vars to return values, and executes `body` with those functions replaced with spies that return the desired return value.
+
+### (with-fakes fns & body)
+Accepts a map of function vars to functions, and executes `body` with the original functions spied and replaced with the supplied implementations.
