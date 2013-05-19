@@ -1,4 +1,4 @@
-(defproject q "0.1.0"
+(defproject q "0.1.1-SNAPSHOT"
   :description "Spy gadgets for Clojure testing"
   :url "http://github.com/glenjamin/q"
   :license {:name "Eclipse Public License"

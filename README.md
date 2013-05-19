@@ -4,6 +4,8 @@ Q provides gadgets for spies, and aims to make testing involving complex
 dependencies easier. It provides helper functions for creating fakes, stubs and
 spies - as well as ways to inspect what was called on them after-the-fact.
 
+[![Build Status](https://travis-ci.org/glenjamin/q.png?branch=master)](https://travis-ci.org/glenjamin/q)
+
 ```clojure
 
 [q "0.1.0"]
