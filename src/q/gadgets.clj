@@ -18,20 +18,37 @@
       {::calls calls})))
 
 (defn calls
-  "Takes one arg, a fn that has previously been spied. Returns a seq
-  of maps, one per call. Each map contains the keys :args and :return
-  or :throw"
+  "Returns a seq of call maps, one per call.
+  Each map contains the keys :args and :return or :throw"
   [f]
   (-> f (meta) ::calls (deref)))
 
-(defmacro with-spy
+(defn call
+  "Get the call map for the nth call"
+  [f n]
+  (-> f calls (nth n)))
+
+(defn called?
+  "Has the spied function been called?"
+  [f]
+  (-> f calls seq boolean))
+
+(defn called-once?
+  "Has the spied function been called once?"
+  [f]
+  (-> f calls count (= 1)))
+
+(defn call-count
+  "The number of times the spied function has been called"
+  [f]
+  (-> f calls count))
+
+(defmacro with-spies
   "Takes a vector of fn vars (vars that resolve to fns). Modifies the
   fn to track call counts, but does not change the fn's behavior"
   [vs & body]
-  `(with-redefs ~(->> (mapcat (fn [v]
-                                [v `(spy ~v)]) vs)
-                      (vec))
-     (do ~@body)))
+  `(with-redefs ~(vec (mapcat (fn [v] [v `(spy ~v)]) vs))
+     ~@body))
 
 (defn- prep-stubs
   [setup]
@@ -43,7 +60,7 @@
     :else
       (throw (Exception. (str "Unexpected binding: " setup)))))
 
-(defmacro with-stub
+(defmacro with-stubs
   "Can either take a vector of fn vars, or a map of fn vars to return values.
   Replaces each fn with one that takes any number of args and returns nil or
   the mapped return value. Also spies the stubbed-fn"

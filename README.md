@@ -38,15 +38,21 @@ Takes a vector of function vars `fns` and executes `body` with those functions
 replaced with spies.
 
 ### (calls spied-fn)
-Returns a vector of function invocation maps, representing each call of `fn`.
+Returns a vector of call maps, representing each call of `fn`.  
 Each map will contain `:args` a vector of the arguments it was called with, and
 either `:return` for the return value or `:throw` for the exception thrown.
 
-### (called spied-fn)
-Returns the number of times `fn` was called as an integer.
+### (called? spied-fn)
+Returns true if `spied-fn` was called.
 
-### (called-once spied-fn)
-Returns true if the function was called once
+### (called-once? spied-fn)
+Returns true if `spied-fn` was called once.
+
+### (call-count spied-fn)
+Returns the number of times `spied-fn` was called.
+
+### (call spied-fn n)
+Returns the call map for the `n`th time `spied-fn` was called.
 
 ## Stubs
 
@@ -63,5 +69,4 @@ original functions spied and replaced with the supplied implementations.
 
 
 ## Licence
-Released under the
-[MIT License](http://www.opensource.org/licenses/mit-license.php)
+Distributed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html).
