@@ -5,7 +5,7 @@
   [f]
   (let [calls (atom [])
         old-f f]
-    (with-meta (fn [& args]
+    (with-meta (fn spy [& args]
                  (try
                    (let [resp (apply old-f args)]
                      (swap! calls conj {:args args
@@ -28,6 +28,11 @@
   [f n]
   (-> f calls (nth n)))
 
+(defn last-call
+  "Get the last call map"
+  [f]
+  (-> f calls last))
+
 (defn called?
   "Has the spied function been called?"
   [f]
@@ -43,20 +48,26 @@
   [f]
   (-> f calls count))
 
+(defn called-with?
+  "Has the spied function been called with these args?"
+  [f args]
+  (some #(= args (:args %)) (calls f)))
+
 (defmacro with-spies
   "Takes a vector of fn vars (vars that resolve to fns). Modifies the
   fn to track call counts, but does not change the fn's behavior"
-  [vs & body]
-  `(with-redefs ~(vec (mapcat (fn [v] [v `(spy ~v)]) vs))
+  [setup & body]
+  `(with-fakes ~(zipmap setup setup)
      ~@body))
 
 (defn- prep-stubs
   [setup]
   (cond
     (vector? setup)
-      (prep-stubs (zipmap setup (repeat nil)))
+      (zipmap setup (repeat `(constantly nil)))
     (map? setup)
-      (mapcat (fn [[f r]] [f `(spy (constantly ~r))]) setup)
+      (zipmap (keys setup)
+              (map (fn [v] `(constantly ~v)) (vals setup)))
     :else
       (throw (Exception. (str "Unexpected binding: " setup)))))
 
@@ -65,6 +76,12 @@
   Replaces each fn with one that takes any number of args and returns nil or
   the mapped return value. Also spies the stubbed-fn"
   [setup & body]
+  `(with-fakes ~(prep-stubs setup)
+     ~@body))
 
-  `(with-redefs ~(vec (prep-stubs setup))
+(defmacro with-fakes
+  "Takes a map of fn vars to fns.
+  Replaces each fn with the new implementation and spies the stubbed-fn"
+  [setup & body]
+  `(with-redefs ~(vec (mapcat (fn [[f fake]] [f `(spy ~fake)]) setup))
      ~@body))

@@ -42,6 +42,12 @@ Returns a vector of call maps, representing each call of `fn`.
 Each map will contain `:args` a vector of the arguments it was called with, and
 either `:return` for the return value or `:throw` for the exception thrown.
 
+### (call spied-fn n)
+Returns the call map for the `n`th time `spied-fn` was called.
+
+### (last-call spied-fn)
+Returns the most recent call map for `spied-fn`.
+
 ### (called? spied-fn)
 Returns true if `spied-fn` was called.
 
@@ -51,8 +57,8 @@ Returns true if `spied-fn` was called once.
 ### (call-count spied-fn)
 Returns the number of times `spied-fn` was called.
 
-### (call spied-fn n)
-Returns the call map for the `n`th time `spied-fn` was called.
+### (called-with? spied-fn args)
+Returns true if `spied-fn` was called with `args`.
 
 ## Stubs
 

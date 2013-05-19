@@ -70,6 +70,21 @@
           (should= {:args [:a :b :c] :return [:c :b :a]} (first calls))
           (should= {:args [:x :y :z] :return [:z :y :x]} (second calls)))))
 
+    (describe "call"
+      (it "returns the call map for the nth call"
+        (bar :a :b :c)
+        (bar :x :y :z)
+        (should= {:args [:a :b :c] :return [:c :b :a]} (q/call bar 0))
+        (should= {:args [:x :y :z] :return [:z :y :x]} (q/call bar 1))))
+
+    (describe "last-call"
+      (it "returns the most recent call map"
+        (bar :a :b :c)
+        (bar :x :y :z)
+        (should= {:args [:x :y :z] :return [:z :y :x]} (q/last-call bar))
+        (bar :i :j :k)
+        (should= {:args [:i :j :k] :return [:k :j :i]} (q/last-call bar))))
+
     (describe "called?"
       (it "returns false if not called"
         (should-not (q/called? foo)))
@@ -103,30 +118,29 @@
         (foo)
         (should= 5 (q/call-count foo))))
 
-    (describe "call"
-      (it "returns the call map for the nth call"
-        (bar :a :b :c)
-        (bar :x :y :z)
-        (should= {:args [:a :b :c] :return [:c :b :a]} (q/call bar 0))
-        (should= {:args [:x :y :z] :return [:z :y :x]} (q/call bar 1))))
-
-
-    )
+    (describe "called-with?"
+      (before (bar :a :b :c))
+      (it "return true if args match"
+        (should (q/called-with? bar [:a :b :c])))
+      (it "return false if args do not match"
+        (should-not (q/called-with? bar [:x :y :z])))))
 
   (describe "with-stub"
 
-    (it "uses [vector] make spies that return nil"
+    (it "uses [vector] to make spies that return nil"
       (q/with-stubs [foo bar err]
         (let [err-result (err)]
           (should= nil err-result))
         (should= 1 (-> err q/calls count))))
 
-    (it "uses {map} make spies that return canned values"
+    (it "uses {map} to make spies that return canned values"
       (q/with-stubs {err :err}
-        (let [err-result (err)]
-          (should= :err err-result))
-        (should= 1 (-> err q/calls count))))
+        (should= :err (err))
+        (should= 1 (-> err q/calls count)))))
 
-    )
+  (describe "with-fakes"
 
-  )
+    (it "uses {map} to make spies that use alternate implementation"
+      (q/with-fakes {bar (fn [& abc] (first abc))}
+        (should= :a (bar :a :b :c))
+        (should= 1 (-> bar q/calls count))))))
