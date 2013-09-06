@@ -11,7 +11,7 @@ Bond is a spying and stubbing library, primarily intended for tests.
 ```clojure
 
 (ns test.foo
-  (:require [bond.james :as bond]))
+  (:require [bond.james :as bond :refer [with-spy]))
 
 (defn foo [x] ...)
 
