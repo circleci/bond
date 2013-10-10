@@ -34,11 +34,16 @@
      (do ~@body)))
 
 (defmacro with-stub
-  "Takes a vector of fn vars. Replaces each fn with one that takes any
-  number of args and returns nil. Also spies the stubbed-fn"
+  "Takes a vector of fn vars and/or [fn replacement] vectors.
+
+  Replaces each fn with it's replacement. If a replacement is not specified for
+  a fn it's replaced with one that takes any number of args and returns nil.
+  Also spies the stubbed-fn"
   [vs & body]
 
   `(with-redefs ~(->> (mapcat (fn [v]
-                                [v `(spy (constantly nil))]) vs)
+                                (if (vector? v)
+                                  [(first v) `(spy ~(second v))]
+                                  [v `(spy (constantly nil))])) vs)
                       (vec))
      ~@body))

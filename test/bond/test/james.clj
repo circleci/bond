@@ -1,5 +1,5 @@
 (ns bond.test.james
-  (:require [clojure.test :refer (deftest is)]
+  (:require [clojure.test :refer (deftest is testing)]
             [bond.james :as bond]))
 
 
@@ -18,3 +18,13 @@
          (with-out-str
            (bond/with-stub [bar]
              (bar 3))))))
+
+(deftest stub-with-replacement-works []
+  (bond/with-stub [foo
+                   [bar #(str "arg is " %)]]
+    (testing "stubbing works"
+      (is (nil? (foo 4)))
+      (is (= "arg is 3" (bar 3))))
+    (testing "spying works"
+      (is (= [4] (-> foo bond/calls first :args)))
+      (is (= [3] (-> bar bond/calls first :args))))))
