@@ -1,5 +1,8 @@
-Bond
+Bond ![CircleCI Status][]
 ====
+
+[CircleCI Status]: https://circleci.com/gh/circleci/bond.png
+
 
 Bond is a spying and stubbing library, primarily intended for tests.
 
