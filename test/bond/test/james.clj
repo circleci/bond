@@ -7,11 +7,15 @@
 
 (defn bar [x] (println "bar!") (* 2 x))
 
-(deftest spy-works []
+(deftest spy-logs-args-and-results []
   (bond/with-spy [foo]
     (foo 1)
     (foo 2)
-    (is (= 2 (-> foo bond/calls count)))))
+    (let [exception (is (thrown? clojure.lang.ArityException (foo 3 4)))]
+      (is (= [{:args [1] :return 2}
+              {:args [2] :return 4}
+              {:args [3 4] :throw exception}]
+             (bond/calls foo))))))
 
 (deftest stub-works []
   (is (= ""
