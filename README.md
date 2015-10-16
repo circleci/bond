@@ -28,6 +28,11 @@ Bond provides one main macro, with-spy. It takes a vector of defn vars (vars tha
 
 Bond also provides with-stub. It works the same as with-spy, but redefines the fn to return (constantly nil), while also spying on it.
 
+
+Code Coverage
+-------------
+![codecov.io](https://codecov.io/github/circleci/bond/branch.svg?branch=master)
+
 License
 -------
 
