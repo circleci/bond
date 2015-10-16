@@ -47,3 +47,18 @@
                                   [v `(spy (constantly nil))])) vs)
                       (vec))
      ~@body))
+
+(defmacro with-trap
+  "Calls body with the vector of fn vars stubbed and throws an exception if
+  any of the stubbed fuctions were called when executing body.
+
+  The exception that is thrown is an ex-info object. To inspect the arguments
+  that were passed to the function to which a trap was added, you can inspect
+  the :calls key of the ex-data of the thrown exception."
+  [vs & body]
+  `(with-stub ~vs
+     (let [result# (do ~@body)]
+       (doseq [v# ~vs]
+         (when (-> v# calls count pos?)
+           (throw (ex-info "fn was called" {:calls (calls v#)}))))
+       result#)))
