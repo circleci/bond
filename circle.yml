@@ -1,4 +1,8 @@
 machine:
+  environment:
+    CLOVERAGE_VERSION: 1.0.7-SNAPSHOT
+  python:
+    version: 3.5.0
   java:
     version: oraclejdk8
 general:
@@ -9,4 +13,6 @@ test:
     - mkdir $CIRCLE_TEST_REPORTS/lein
   override:
     - lein test-out junit $CIRCLE_TEST_REPORTS/lein/results.xml
-    - lein cloverage
+    - lein cloverage --codecov
+  post:
+    - codecov --token=$CODECOV_TOKEN --file target/coverage/codecov.json
