@@ -12,6 +12,6 @@ test:
   pre:
     - mkdir $CIRCLE_TEST_REPORTS/lein
   override:
-    - lein test-out junit $CIRCLE_TEST_REPORTS/lein/results.xml
+    - lein test
   post:
     - codecov --token=$CODECOV_TOKEN --file target/coverage/codecov.json
