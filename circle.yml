@@ -1,5 +1,0 @@
-machine:
-  python:
-    version: 3.5.0
-  java:
-    version: oraclejdk8
