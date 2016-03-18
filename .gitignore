@@ -2,3 +2,4 @@
 .lein-failures
 .nrepl-port
 /target/
+/node_modules

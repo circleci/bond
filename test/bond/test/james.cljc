@@ -1,6 +1,7 @@
 (ns bond.test.james
-  (:require [clojure.test :refer (deftest is testing)]
-            [bond.james :as bond]))
+  (:require #?(:clj [clojure.test :refer (deftest is testing)])
+            [bond.james :as bond])
+  #?(:cljs (:require-macros [cljs.test :refer (is are deftest testing)])))
 
 
 (defn foo [x] (* 2 x))
