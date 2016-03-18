@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "phantomjs-prebuilt": "2.1.7"
+  }
+}

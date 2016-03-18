@@ -2,3 +2,6 @@
 .lein-failures
 .nrepl-port
 /target/
+/node_modules
+/resources/public
+pom.xml*
