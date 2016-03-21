@@ -2,5 +2,12 @@
   :description "Spying library for testing"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]]
-  :plugins [[lein-test-out "0.3.1" :exclusions [org.clojure/clojure]]])
+  :dependencies [[org.clojure/clojure "1.7.0"]
+                 [org.clojure/clojurescript "1.7.228"]
+                 [com.cemerick/clojurescript.test "0.3.0"]]
+  :plugins [[lein-test-out "0.3.1" :exclusions [org.clojure/clojure]]
+            [lein-cljsbuild "1.1.3"]]
+  :cljsbuild {:builds [{:source-paths ["src" "test"]
+                        :compiler {:output-dir "resources/public/js/out"
+                                   :output-to "resources/public/js/out/bond.js"}
+                        :optimizations :advanced}]})
