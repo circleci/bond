@@ -11,7 +11,7 @@
                      (swap! calls conj {:args args
                                         :return resp})
                      resp)
-                   (catch Exception e
+                   (catch #?(:clj Exception :cljs js/Error) e
                      (swap! calls conj {:args args
                                         :throw e})
                      (throw e))))
