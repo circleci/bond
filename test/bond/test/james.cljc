@@ -1,6 +1,7 @@
 (ns bond.test.james
-  (:require [clojure.test :refer (deftest is testing)]
-            [bond.james :as bond]))
+  (:require #?(:clj [clojure.test :refer (deftest is testing)])
+            [bond.james :as bond :include-macros true])
+  #?(:cljs (:require-macros [cljs.test :refer (is deftest testing)])))
 
 
 (defn foo [x] (* 2 x))
@@ -11,11 +12,13 @@
   (bond/with-spy [foo]
     (foo 1)
     (foo 2)
-    (let [exception (is (thrown? clojure.lang.ArityException (foo 3 4)))]
-      (is (= [{:args [1] :return 2}
-              {:args [2] :return 4}
-              {:args [3 4] :throw exception}]
-             (bond/calls foo))))))
+    (is (= [{:args [1] :return 2}
+            {:args [2] :return 4}]
+           (bond/calls foo)))
+    ;; cljs doesn't throw artity exceptions
+    #?(:clj (let [exception (is (thrown? clojure.lang.ArityException (foo 3 4)))]
+              (is (= {:args [3 4] :throw exception}
+                     (-> foo bond/calls last)))))))
 
 (deftest stub-works []
   (is (= ""
