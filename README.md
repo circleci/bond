@@ -26,8 +26,21 @@ Bond is a spying and stubbing library, primarily intended for tests.
 
 Bond provides one main macro, with-spy. It takes a vector of defn vars (vars that resolve to fns). Each var will be redef'd, wrapping the fn to track arguments and call counts. At any point during the scope, you can call (bond/calls f), where f is a spied fn. `calls` returns a seq of maps, one for each call to f. Each map contains the keys :args, a seq of args the fn was called with, and one of :return or :throw.
 
-Bond also provides with-stub. It works the same as with-spy, but redefines the fn to return (constantly nil), while also spying on it.
+Bond also provides with-stub. It works the same as with-spy, but redefines the fn to return `(constantly nil)` (default), while also spying on it. You can specify an arbitrary function instead of the default `(constantly nil)` by providing a `[fn-var replacement-fn]` vector in place of just the fn name:
 
+```clojure
+(ns test.foo
+  (:require [bond.james :as bond :refer [with-stub]))
+
+(defn foo [x] ...)
+
+(defn bar [y] ...)
+
+(deftest foo-is-called
+  (with-stub [[foo (fn [x] "foo")]
+              [bar (fn [y] "bar")]]
+    (is (= ["foo" "bar"] [(foo 1) (bar 2)]))))
+```
 
 License
 -------
