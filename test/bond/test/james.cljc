@@ -35,3 +35,20 @@
     (testing "spying works"
       (is (= [4] (-> foo bond/calls first :args)))
       (is (= [3] (-> bar bond/calls first :args))))))
+
+
+(deftest iterator-style-stubbing-works []
+  (bond/with-stub [foo
+                   [bar [#(str "first arg is " %)
+                         #(str "second arg is " %)
+                         #(str "third arg is " %)]]]
+    (testing "stubbing works"
+      (is (nil? (foo 4)))
+      (is (= "first arg is 3" (bar 3)))
+      (is (= "second arg is 4" (bar 4)))
+      (is (= "third arg is 5" (bar 5))))
+    (testing "spying works"
+      (is (= [4] (-> foo bond/calls first :args)))
+      (is (= [3] (-> bar bond/calls first :args)))
+      (is (= [4] (-> bar bond/calls second :args)))
+      (is (= [5] (-> bar bond/calls last :args))))))
