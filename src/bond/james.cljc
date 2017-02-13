@@ -3,11 +3,11 @@
 (defn spy
   "wrap f, returning a new fn that keeping track of its call count and arguments"
   [f]
-  (let [calls (atom [])
-        old-f f]
+  (let [calls (atom [])]
     (with-meta (fn [& args]
                  (try
-                   (let [resp (apply old-f args)]
+                   (let [old-f (if (vector? f) (nth f (count @calls)) f)
+                         resp (apply old-f args)]
                      (swap! calls conj {:args args
                                         :return resp})
                      resp)
