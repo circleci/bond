@@ -40,6 +40,14 @@ Bond also provides with-stub. It works the same as with-spy, but redefines the f
   (with-stub [[foo (fn [x] "foo")]
               [bar (fn [y] "bar")]]
     (is (= ["foo" "bar"] [(foo 1) (bar 2)]))))
+    
+(deftest consecutive-stubbing
+  (with-stub [[foo [(fn [x] "foo1") 
+                    (fn [x] "foo2") 
+                    (fn [x] "foo3")]]
+              [bar (fn [y] "bar")]]
+    (is (= ["foo1" "foo2" "foo3" "bar"] [(foo 1) (foo 1) (foo 1) (bar 2)]))))
+    
 ```
 
 License
