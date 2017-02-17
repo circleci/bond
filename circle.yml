@@ -2,3 +2,10 @@ test:
   override:
     - lein test
     - lein cljsbuild test
+
+deployment:
+  deploy_jars:
+    branch: master
+    commands:
+      - lein version-spec
+      - lein deploy circle-s3
