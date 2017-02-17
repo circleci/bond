@@ -7,7 +7,8 @@
                  [org.clojure/clojurescript "1.7.228"]
                  [com.cemerick/clojurescript.test "0.3.0"]]
   :plugins [[lein-test-out "0.3.1" :exclusions [org.clojure/clojure]]
-            [lein-cljsbuild "1.1.3"]]
+            [lein-cljsbuild "1.1.3"]
+            [circleci/lein-version-spec "0.0.5" :exclusions [org.clojure/clojure]]]
   :cljsbuild {:builds [{:source-paths ["src" "test"]
                         :compiler {:output-dir "resources/public/js/out"
                                    :output-to "resources/public/js/test-bond.js"
