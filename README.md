@@ -1,6 +1,8 @@
 Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)](https://circleci.com/gh/circleci/bond) [![codecov.io](https://codecov.io/github/circleci/bond/coverage.svg?branch=master)](https://codecov.io/github/circleci/bond?branch=master)
 ====
 
+[![Join the chat at https://gitter.im/circleci/bond](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/circleci/bond?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Bond is a spying and stubbing library, primarily intended for tests.
 
 ```clojure
