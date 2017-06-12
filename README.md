@@ -50,6 +50,26 @@ Bond also provides with-stub. It works the same as with-spy, but redefines the f
     
 ```
 
+In addition to `with-spy` and `with-stub`, Bond also provides `with-spy-ns`
+and `with-stub-ns` which can spy/stub every function in a namespace in one go:
+
+```clojure
+(ns test.foo
+  (:require [bond.james :as bond]
+            [clojure.test :refer (deftest is)]))
+
+(defn foo [] :foo)
+
+(defn bar [] :bar)
+
+(deftest you-can-stub-entire-ns
+  (is (= :foo (foo)))
+  (is (= :bar (bar)))
+  (bond/with-stub-ns [[foo (constantly :baz)]]
+    (is (= :baz (foo)))
+    (is (= :baz (bar)))))
+```
+
 License
 -------
 
