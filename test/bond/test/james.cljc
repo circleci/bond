@@ -52,3 +52,22 @@
       (is (= [3] (-> bar bond/calls first :args)))
       (is (= [4] (-> bar bond/calls second :args)))
       (is (= [5] (-> bar bond/calls last :args))))))
+
+(deftest spying-entire-namespaces-works
+  (bond/with-spy-ns [bond.test.james]
+    (foo 1)
+    (foo 2)
+    (is (= [{:args [1] :return 2}
+            {:args [2] :return 4}]
+           (bond/calls foo)))
+    (is (= 0 (-> bar bond/calls count)))))
+
+(deftest stubbing-entire-namespaces-works
+  (testing "without replacements"
+    (bond/with-stub-ns [bond.test.james]
+      (is (nil? (foo 10)))
+      (is (= [10] (-> foo bond/calls first :args)))))
+  (testing "with replacements"
+    (bond/with-stub-ns [[bond.test.james (constantly 3)]]
+      (is (= 3 (foo 10)))
+      (is (= [10] (-> foo bond/calls first :args))))))

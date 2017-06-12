@@ -33,6 +33,22 @@
                       (vec))
      (do ~@body)))
 
+(defmacro with-spy-ns
+  "Like with-spy but takes a vector of namespaces. Spies on every function in
+  the namespace."
+  [namespaces & body]
+  `(with-redefs ~(->> namespaces
+                      (mapcat (fn [n]
+                                (->> (ns-publics n)
+                                     (remove (fn [[s v]]
+                                            (:macro (meta v))))
+                                     (filter (fn [[_ v]]
+                                               (fn? @v)))
+                                     (mapcat (fn [[s _]]
+                                               [s `(spy ~s)])))))
+                      vec)
+     (do ~@body)))
+
 (defmacro with-stub
   "Takes a vector of fn vars and/or [fn replacement] vectors.
 
@@ -47,3 +63,25 @@
                                   [v `(spy (constantly nil))])) vs)
                       (vec))
      ~@body))
+
+(defmacro with-stub-ns
+  "Takes a vector of namespaces and/or [namespace replacement] vectors.
+
+  Replaces every fn in each namespace with its replacement. If a replacement is
+  not specified for a namespace every fn in that namespace is replaced with
+  (constantly nil). All replaced functions are also spied."
+  [namespaces & body]
+  `(with-redefs ~(->> namespaces
+                      (mapcat (fn [n]
+                                (let [[n stub-fn] (if (vector? n)
+                                                    [(first n) `(spy ~(second n))]
+                                                    [n `(spy (constantly nil))])]
+                                  (->> (ns-publics n)
+                                       (remove (fn [[s v]]
+                                                 (:macro (meta v))))
+                                       (filter (fn [[_ v]]
+                                                 (fn? @v)))
+                                       (mapcat (fn [[s _]]
+                                                 [s stub-fn]))))))
+                      vec)
+     (do ~@body)))
