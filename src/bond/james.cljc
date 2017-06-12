@@ -24,6 +24,17 @@
   [f]
   (-> f (meta) ::calls (deref)))
 
+(defn ns->fn-symbols
+  "A utility function to get a sequence of fully-qualified symbols for all the
+  functions in a namespace."
+  [ns]
+  (->> (ns-publics ns)
+       vals
+       (remove (comp :macro meta))
+       (filter (comp fn? deref))
+       (map #(symbol (str (:ns (meta %)))
+                     (str (:name (meta %)))))))
+
 (defmacro with-spy
   "Takes a vector of fn vars (vars that resolve to fns). Modifies the
   fn to track call counts, but does not change the fn's behavior"
@@ -37,16 +48,7 @@
   "Like with-spy but takes a vector of namespaces. Spies on every function in
   the namespace."
   [namespaces & body]
-  `(with-redefs ~(->> namespaces
-                      (mapcat (fn [n]
-                                (->> (ns-publics n)
-                                     (remove (fn [[s v]]
-                                            (:macro (meta v))))
-                                     (filter (fn [[_ v]]
-                                               (fn? @v)))
-                                     (mapcat (fn [[s _]]
-                                               [s `(spy ~s)])))))
-                      vec)
+  `(with-spy ~(mapcat ns->fn-symbols namespaces)
      (do ~@body)))
 
 (defmacro with-stub
@@ -71,17 +73,9 @@
   not specified for a namespace every fn in that namespace is replaced with
   (constantly nil). All replaced functions are also spied."
   [namespaces & body]
-  `(with-redefs ~(->> namespaces
-                      (mapcat (fn [n]
-                                (let [[n stub-fn] (if (vector? n)
-                                                    [(first n) `(spy ~(second n))]
-                                                    [n `(spy (constantly nil))])]
-                                  (->> (ns-publics n)
-                                       (remove (fn [[s v]]
-                                                 (:macro (meta v))))
-                                       (filter (fn [[_ v]]
-                                                 (fn? @v)))
-                                       (mapcat (fn [[s _]]
-                                                 [s stub-fn]))))))
-                      vec)
+  `(with-stub ~(mapcat (fn [n]
+                         (if (vector? n)
+                           (map #(vec [% (second n)]) (ns->fn-symbols (first n)))
+                           (ns->fn-symbols n)))
+                       namespaces)
      (do ~@body)))
