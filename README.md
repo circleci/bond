@@ -5,7 +5,7 @@ Bond is a spying and stubbing library, primarily intended for tests.
 
 ```clojure
 
-[circleci/bond "0.2.9"]
+[circleci/bond "0.2.12"]
 ```
 
 ```clojure
