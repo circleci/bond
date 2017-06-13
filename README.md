@@ -5,7 +5,7 @@ Bond is a spying and stubbing library, primarily intended for tests.
 
 ```clojure
 
-[circleci/bond "0.2.9"]
+[circleci/bond "0.2.12"]
 ```
 
 ```clojure
@@ -48,6 +48,26 @@ Bond also provides with-stub. It works the same as with-spy, but redefines the f
               [bar (fn [y] "bar")]]
     (is (= ["foo1" "foo2" "foo3" "bar"] [(foo 1) (foo 1) (foo 1) (bar 2)]))))
     
+```
+
+In addition to `with-spy` and `with-stub`, Bond also provides `with-spy-ns`
+and `with-stub-ns` which can spy/stub every function in a namespace in one go:
+
+```clojure
+(ns test.foo
+  (:require [bond.james :as bond]
+            [clojure.test :refer (deftest is)]))
+
+(defn foo [] :foo)
+
+(defn bar [] :bar)
+
+(deftest you-can-stub-entire-ns
+  (is (= :foo (foo)))
+  (is (= :bar (bar)))
+  (bond/with-stub-ns [[foo (constantly :baz)]]
+    (is (= :baz (foo)))
+    (is (= :baz (bar)))))
 ```
 
 License

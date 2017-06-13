@@ -24,6 +24,17 @@
   [f]
   (-> f (meta) ::calls (deref)))
 
+(defn ns->fn-symbols
+  "A utility function to get a sequence of fully-qualified symbols for all the
+  functions in a namespace."
+  [ns]
+  (->> (ns-publics ns)
+       vals
+       (remove (comp :macro meta))
+       (filter (comp fn? deref))
+       (map #(symbol (str (:ns (meta %)))
+                     (str (:name (meta %)))))))
+
 (defmacro with-spy
   "Takes a vector of fn vars (vars that resolve to fns). Modifies the
   fn to track call counts, but does not change the fn's behavior"
@@ -31,6 +42,13 @@
   `(with-redefs ~(->> (mapcat (fn [v]
                                 [v `(spy ~v)]) vs)
                       (vec))
+     (do ~@body)))
+
+(defmacro with-spy-ns
+  "Like with-spy but takes a vector of namespaces. Spies on every function in
+  the namespace."
+  [namespaces & body]
+  `(with-spy ~(mapcat ns->fn-symbols namespaces)
      (do ~@body)))
 
 (defmacro with-stub
@@ -47,3 +65,17 @@
                                   [v `(spy (constantly nil))])) vs)
                       (vec))
      ~@body))
+
+(defmacro with-stub-ns
+  "Takes a vector of namespaces and/or [namespace replacement] vectors.
+
+  Replaces every fn in each namespace with its replacement. If a replacement is
+  not specified for a namespace every fn in that namespace is replaced with
+  (constantly nil). All replaced functions are also spied."
+  [namespaces & body]
+  `(with-stub ~(mapcat (fn [n]
+                         (if (vector? n)
+                           (map #(vec [% (second n)]) (ns->fn-symbols (first n)))
+                           (ns->fn-symbols n)))
+                       namespaces)
+     (do ~@body)))
