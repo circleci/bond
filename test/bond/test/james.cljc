@@ -4,7 +4,7 @@
             [bond.test.target :as target])
   #?(:cljs (:require-macros [cljs.test :refer (is deftest testing)])))
 
-(deftest spy-logs-args-and-results []
+(deftest spy-logs-args-and-results
   (bond/with-spy [target/foo]
     (target/foo 1)
     (target/foo 2)
@@ -22,7 +22,7 @@
            (bond/with-stub [target/bar]
              (target/bar 3))))))
 
-(deftest stub-with-replacement-works []
+(deftest stub-with-replacement-works
   (bond/with-stub [target/foo
                    [target/bar #(str "arg is " %)]]
     (testing "stubbing works"
@@ -33,7 +33,7 @@
       (is (= [3] (-> target/bar bond/calls first :args))))))
 
 
-(deftest iterator-style-stubbing-works []
+(deftest iterator-style-stubbing-works
   (bond/with-stub [target/foo
                    [target/bar [#(str "first arg is " %)
                                 #(str "second arg is " %)
@@ -48,6 +48,17 @@
       (is (= [3] (-> target/bar bond/calls first :args)))
       (is (= [4] (-> target/bar bond/calls second :args)))
       (is (= [5] (-> target/bar bond/calls last :args))))))
+
+#?(:clj
+   (deftest stub!-throws-arity-exception
+     (bond/with-stub! [[target/foo (constantly 9)]]
+       (is (= 9 (target/foo 12)))
+       (is (= [{:args [12] :return 9}] (bond/calls target/foo))))
+     (bond/with-stub! [target/bar
+                       [target/quux (fn [_ _ & x] x)]]
+       (is (thrown? clojure.lang.ArityException
+                    (target/bar 1 2)))
+       (is (= [6 5] (target/quux 8 7 6 5))))))
 
 (deftest spying-entire-namespaces-works
   (bond/with-spy-ns [bond.test.target]

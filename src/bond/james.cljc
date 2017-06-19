@@ -66,6 +66,34 @@
                       (vec))
      ~@body))
 
+(defn- var-arg? [arglist]
+  (some #{'&} arglist))
+
+(defn- args-match? [args {:keys [arglists name ns]}]
+  (or (some var-arg? arglists)
+      (some #(= (count args) (count %)) arglists)))
+
+(defn stub! [v replacement]
+  (let [f (spy replacement)]
+    (with-meta (fn [& args]
+                 (if (args-match? args (meta v))
+                   (apply f args)
+                   (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
+                               (count args) (str (:ns (meta v)) "/"
+                                                 (:name (meta v)))))))
+      (meta f))))
+
+(defmacro with-stub!
+  "Like with-stub, but throws an exception upon arity mismatch."
+  [vs & body]
+  `(with-redefs ~(->> (mapcat (fn [v]
+                                (if (vector? v)
+                                  [(first v) `(stub! (var ~(first v))
+                                                     ~(second v))]
+                                  [v `(stub! (var ~v) (constantly nil))])) vs)
+                      (vec))
+     ~@body))
+
 (defmacro with-stub-ns
   "Takes a vector of namespaces and/or [namespace replacement] vectors.
 
