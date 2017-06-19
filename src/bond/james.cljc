@@ -66,17 +66,19 @@
                       (vec))
      ~@body))
 
-(defn- var-arg? [arglist]
-  (some #{'&} arglist))
+(defn- arglist-match? [arg-count arglist]
+  (let [[regular-args var-args] (split-with (complement #{'&}) arglist)]
+    (if (empty? var-args)
+      (= arg-count (count regular-args))
+      (>= arg-count (count regular-args)))))
 
-(defn- args-match? [args {:keys [arglists name ns]}]
-  (or (some var-arg? arglists)
-      (some #(= (count args) (count %)) arglists)))
+(defn- args-match? [arg-count arglists]
+  (some (partial arglist-match? arg-count) arglists))
 
 (defn stub! [v replacement]
   (let [f (spy replacement)]
     (with-meta (fn [& args]
-                 (if (args-match? args (meta v))
+                 (if (args-match? (count args) (:arglists (meta v)))
                    (apply f args)
                    (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
                                (count args) (str (:ns (meta v)) "/"
