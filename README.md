@@ -4,8 +4,7 @@ Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)]
 Bond is a spying and stubbing library, primarily intended for tests.
 
 ```clojure
-
-[circleci/bond "0.2.12"]
+[circleci/bond "0.3.0"]
 ```
 
 ```clojure
@@ -30,29 +29,29 @@ Bond also provides `with-stub!`. It works the same as `with-spy`, but redefines 
 
 ```clojure
 (ns test.foo
-  (:require [bond.james :as bond :refer [with-stub]))
+  (:require [bond.james :as bond :refer [with-stub!]))
 
 (defn foo [x] ...)
 
 (defn bar [y] ...)
 
 (deftest foo-is-called
-  (with-stub [[foo (fn [x] "foo")]
-              [bar (fn [y] "bar")]]
+  (with-stub! [[foo (fn [x] "foo")]
+               [bar (fn [y] "bar")]]
     (is (= ["foo" "bar"] [(foo 1) (bar 2)]))))
     
 (deftest consecutive-stubbing
-  (with-stub [[foo [(fn [x] "foo1") 
-                    (fn [x] "foo2") 
-                    (fn [x] "foo3")]]
-              [bar (fn [y] "bar")]]
+  (with-stub! [[foo [(fn [x] "foo1") 
+                     (fn [x] "foo2") 
+                     (fn [x] "foo3")]]
+               [bar (fn [y] "bar")]]
     (is (= ["foo1" "foo2" "foo3" "bar"] [(foo 1) (foo 1) (foo 1) (bar 2)]))))
     
 ```
 
 There is also a `with-stub` macro which works like `with-stub!` but omits the argument check.
 
-In addition to `with-spy` and `with-stub`, Bond also provides `with-spy-ns`
+In addition to `with-spy` and `with-stub!`, Bond also provides `with-spy-ns`
 and `with-stub-ns` which can spy/stub every function in a namespace in one go:
 
 ```clojure
