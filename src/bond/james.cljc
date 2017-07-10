@@ -39,10 +39,11 @@
   "Takes a vector of fn vars (vars that resolve to fns). Modifies the
   fn to track call counts, but does not change the fn's behavior"
   [vs & body]
-  `(with-redefs ~(->> (mapcat (fn [v]
-                                [v `(spy ~v)]) vs)
-                      (vec))
-     (do ~@body)))
+  `(with-redefs-fn ~(->> (mapcat (fn [v]
+                                   `[(var ~v) (spy ~v)]) vs)
+                         (apply hash-map))
+     (fn []
+       ~@body)))
 
 (defmacro with-spy-ns
   "Like with-spy but takes a vector of namespaces. Spies on every function in
@@ -59,12 +60,13 @@
   Also spies the stubbed-fn"
   [vs & body]
 
-  `(with-redefs ~(->> (mapcat (fn [v]
-                                (if (vector? v)
-                                  [(first v) `(spy ~(second v))]
-                                  [v `(spy (constantly nil))])) vs)
-                      (vec))
-     ~@body))
+  `(with-redefs-fn ~(->> (mapcat (fn [v]
+                                   (if (vector? v)
+                                     `[(var ~(first v)) (spy ~(second v))]
+                                     `[(var ~v) (spy (constantly nil))])) vs)
+                         (apply hash-map))
+     (fn []
+       ~@body)))
 
 (defn- arglist-match? [arg-count arglist]
   (let [[regular-args var-args] (split-with (complement #{'&}) arglist)]
@@ -88,13 +90,14 @@
 (defmacro with-stub!
   "Like with-stub, but throws an exception upon arity mismatch."
   [vs & body]
-  `(with-redefs ~(->> (mapcat (fn [v]
+  `(with-redefs-fn ~(->> (mapcat (fn [v]
                                 (if (vector? v)
-                                  [(first v) `(stub! (var ~(first v))
-                                                     ~(second v))]
-                                  [v `(stub! (var ~v) (constantly nil))])) vs)
-                      (vec))
-     ~@body))
+                                  `[(var ~(first v)) (stub! (var ~(first v))
+                                                            ~(second v))]
+                                  `[(var ~v) (stub! (var ~v) (constantly nil))])) vs)
+                         (apply hash-map))
+     (fn []
+       ~@body)))
 
 (defmacro with-stub-ns
   "Takes a vector of namespaces and/or [namespace replacement] vectors.
