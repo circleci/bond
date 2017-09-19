@@ -1,4 +1,55 @@
-test:
-  override:
-    - lein test
-    - lein cljsbuild test
+version: 2
+
+jobs:
+  test-clj:
+    docker:
+      - image: clojure:lein-2.7.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - clj-jars-v2-{{ checksum "project.clj" }}
+            - clj-jars-v2-
+      - run:
+          name: Download dependencies
+          command: lein deps
+      - save_cache:
+          key: clj-jars-v2-{{ checksum "project.clj" }}
+          paths:
+            - ~/.m2
+      - run:
+          name: Run the tests
+          command: lein trampoline test
+  test-cljs:
+    docker:
+      - image: clojure:lein-2.7.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - cljs-jars-v2-{{ checksum "project.clj" }}-{{ checksum "package.json" }}
+            - cljs-jars-v2-
+      - run:
+          name: Download dependencies
+          command: lein deps
+      - run:
+          name: Install phantomjs
+          command: |
+            curl -sL https://deb.nodesource.com/setup_8.x | bash -
+            apt-get install -y nodejs
+            npm install
+      - run:
+          name: Run the tests
+          command: lein cljsbuild test
+      - save_cache:
+          key: cljs-jars-v2-{{ checksum "project.clj" }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.m2
+            - ~/node_modules
+
+workflows:
+  version: 2
+  run_all_tests:
+    jobs:
+      - test-clj
+      - test-cljs
