@@ -13,13 +13,22 @@ jobs:
       - run:
           name: Download dependencies
           command: lein deps
+      - run:
+          name: Run the tests
+          command: lein trampoline test
+      - run:
+          name: Code Coverage
+          command: lein trampoline cloverage --codecov
+      - run:
+          name: Upload Coverage
+          command: bash <(curl -s https://codecov.io/bash) -f target/coverage/codecov.json
+          when: always
       - save_cache:
           key: clj-jars-v2-{{ checksum "project.clj" }}
           paths:
             - ~/.m2
-      - run:
-          name: Run the tests
-          command: lein trampoline test
+      - store_artifacts:
+          path: target/coverage
   test-cljs:
     docker:
       - image: clojure:lein-2.7.1
