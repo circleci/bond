@@ -4,6 +4,10 @@
   [x]
   (* 2 x))
 
+(defn- private-foo
+  [x]
+  (* 2 x))
+
 (defn bar
   [x]
   (println "bar!") (* 2 x))

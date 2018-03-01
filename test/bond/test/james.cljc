@@ -22,6 +22,11 @@
            (bond/with-stub [target/bar]
              (target/bar 3))))))
 
+(deftest stub-works-with-priviate-fn []
+  (bond/with-stub [[target/private-foo (fn [x] (* x x))]]
+    (is (= 9 (#'target/private-foo 3)))
+    (is (= [3] (-> #'target/private-foo bond/calls first :args)))))
+
 (deftest stub-with-replacement-works
   (bond/with-stub [target/foo
                    [target/bar #(str "arg is " %)]]
