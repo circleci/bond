@@ -6,8 +6,8 @@
 
 (deftest spy-logs-args-and-results
   (bond/with-spy [target/foo]
-    (target/foo 1)
-    (target/foo 2)
+    (is (= 2 (target/foo 1)))
+    (is (= 4 (target/foo 2)))
     (is (= [{:args [1] :return 2}
             {:args [2] :return 4}]
            (bond/calls target/foo)))
@@ -15,6 +15,14 @@
     #?(:clj (let [exception (is (thrown? clojure.lang.ArityException (target/foo 3 4)))]
               (is (= {:args [3 4] :throw exception}
                      (-> target/foo bond/calls last)))))))
+
+(deftest spy-can-spy-private-fns
+  (bond/with-spy [target/private-foo]
+    (is (= 4 (#'target/private-foo 2)))
+    (is (= 6 (#'target/private-foo 3)))
+    (is (= [{:args [2] :return 4}
+            {:args [3] :return 6}]
+           (bond/calls #'target/private-foo)))))
 
 (deftest stub-works
   (is (= ""

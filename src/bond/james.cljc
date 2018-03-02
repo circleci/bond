@@ -43,7 +43,7 @@
   fn to track call counts, but does not change the fn's behavior"
   [vs & body]
   `(with-redefs ~(->> (mapcat (fn [v]
-                                [v `(spy ~v)]) vs)
+                                [v `(spy (deref ~(list 'var v)))]) vs)
                       (vec))
      (do ~@body)))
 
