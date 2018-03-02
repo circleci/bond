@@ -16,13 +16,13 @@
               (is (= {:args [3 4] :throw exception}
                      (-> target/foo bond/calls last)))))))
 
-(deftest stub-works []
+(deftest stub-works
   (is (= ""
          (with-out-str
            (bond/with-stub [target/bar]
              (target/bar 3))))))
 
-(deftest stub-works-with-priviate-fn []
+(deftest stub-works-with-private-fn
   (bond/with-stub [[target/private-foo (fn [x] (* x x))]]
     (is (= 9 (#'target/private-foo 3)))
     (is (= [3] (-> #'target/private-foo bond/calls first :args)))))
