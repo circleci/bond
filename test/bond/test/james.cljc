@@ -23,9 +23,14 @@
              (target/bar 3))))))
 
 (deftest stub-works-with-private-fn
-  (bond/with-stub [[target/private-foo (fn [x] (* x x))]]
-    (is (= 9 (#'target/private-foo 3)))
-    (is (= [3] (-> #'target/private-foo bond/calls first :args)))))
+  (testing "without replacement"
+    (bond/with-stub [target/private-foo]
+      (is (nil? (#'target/private-foo 3)))
+      (is (= [3] (-> #'target/private-foo bond/calls first :args)))))
+  (testing "with replacement"
+    (bond/with-stub [[target/private-foo (fn [x] (* x x))]]
+      (is (= 9 (#'target/private-foo 3)))
+      (is (= [3] (-> #'target/private-foo bond/calls first :args))))))
 
 (deftest stub-with-replacement-works
   (bond/with-stub [target/foo
