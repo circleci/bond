@@ -49,6 +49,25 @@ Bond also provides `with-stub!`. It works the same as `with-spy`, but redefines 
     
 ```
 
+Private functions can also be stubbed or spyed:
+
+``` clojure
+(ns test.foo)
+
+(defn- foo [x] ...)
+```
+
+``` clojure
+(ns test.bar
+  (:require [bond.james :as bond :refer [with-stub!]]
+            [test.foo :as foo]))
+
+(deftest foo-is-called
+  (with-stub! [[foo/foo (fn [x] "foo")]]
+    (is (= "foo" (#'foo/foo 1)))
+    (is (= [1] (-> #'foo/foo bond/calls first :args)))))
+```
+
 There is also a `with-stub` macro which works like `with-stub!` but omits the argument check.
 
 In addition to `with-spy` and `with-stub!`, Bond also provides `with-spy-ns`

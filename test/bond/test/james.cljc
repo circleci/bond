@@ -6,8 +6,8 @@
 
 (deftest spy-logs-args-and-results
   (bond/with-spy [target/foo]
-    (target/foo 1)
-    (target/foo 2)
+    (is (= 2 (target/foo 1)))
+    (is (= 4 (target/foo 2)))
     (is (= [{:args [1] :return 2}
             {:args [2] :return 4}]
            (bond/calls target/foo)))
@@ -16,11 +16,29 @@
               (is (= {:args [3 4] :throw exception}
                      (-> target/foo bond/calls last)))))))
 
-(deftest stub-works []
+(deftest spy-can-spy-private-fns
+  (bond/with-spy [target/private-foo]
+    (is (= 4 (#'target/private-foo 2)))
+    (is (= 6 (#'target/private-foo 3)))
+    (is (= [{:args [2] :return 4}
+            {:args [3] :return 6}]
+           (bond/calls #'target/private-foo)))))
+
+(deftest stub-works
   (is (= ""
          (with-out-str
            (bond/with-stub [target/bar]
              (target/bar 3))))))
+
+(deftest stub-works-with-private-fn
+  (testing "without replacement"
+    (bond/with-stub [target/private-foo]
+      (is (nil? (#'target/private-foo 3)))
+      (is (= [3] (-> #'target/private-foo bond/calls first :args)))))
+  (testing "with replacement"
+    (bond/with-stub [[target/private-foo (fn [x] (* x x))]]
+      (is (= 9 (#'target/private-foo 3)))
+      (is (= [3] (-> #'target/private-foo bond/calls first :args))))))
 
 (deftest stub-with-replacement-works
   (bond/with-stub [target/foo

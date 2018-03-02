@@ -22,7 +22,10 @@
   of maps, one per call. Each map contains the keys :args and :return
   or :throw"
   [f]
-  (-> f (meta) ::calls (deref)))
+  (some-> (if (var? f) @f f)
+          meta
+          ::calls
+          deref))
 
 (defn ns->fn-symbols
   "A utility function to get a sequence of fully-qualified symbols for all the
@@ -40,7 +43,7 @@
   fn to track call counts, but does not change the fn's behavior"
   [vs & body]
   `(with-redefs ~(->> (mapcat (fn [v]
-                                [v `(spy ~v)]) vs)
+                                [v `(spy (deref ~(list 'var v)))]) vs)
                       (vec))
      (do ~@body)))
 
