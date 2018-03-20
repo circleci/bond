@@ -79,15 +79,17 @@
   (some (partial arglist-match? arg-count) arglists))
 
 (defn stub!
-  [v replacement arglists]
-  (let [f (spy replacement)]
-    (with-meta (fn [& args]
-                 (if (args-match? (count args) arglists)
-                   (apply f args)
-                   (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
-                               (count args) (str (:ns (meta v)) "/"
-                                                 (:name (meta v)))))))
-      (meta f))))
+  ([v replacement]
+   (stub! v replacement (:arglists (meta v))))
+  ([v replacement arglists]
+   (let [f (spy replacement)]
+     (with-meta (fn [& args]
+                  (if (args-match? (count args) arglists)
+                    (apply f args)
+                    (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
+                                (count args) (str (:ns (meta v)) "/"
+                                                  (:name (meta v)))))))
+       (meta f)))))
 
 (defmacro with-stub!
   "Like with-stub, but throws an exception upon arity mismatch."
