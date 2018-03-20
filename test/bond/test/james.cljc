@@ -80,6 +80,18 @@
                  (target/quuk 1)))
     (is (= [6 5] (target/quux 8 7 6 5)))))
 
+(defn two-arg-fn [arg1 arg2] nil)
+
+(defmulti some-multimethod {:arglists '([arg1 arg2 arg3])} :dispatch-fn)
+
+(deftest stub!-works
+  (testing "2 arity"
+    (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
+                 ((bond/stub! #'two-arg-fn (fn [arg1] nil)) :foo))))
+  (testing "3 arity"
+    (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
+                 ((bond/stub! #'some-multimethod (fn [arg1 arg2])) :arg1 :arg2)))))
+
 (deftest spying-entire-namespaces-works
   (bond/with-spy-ns [bond.test.target]
     (target/foo 1)
