@@ -91,22 +91,27 @@
                                                   (:name (meta v)))))))
        (meta f)))))
 
+(defn- arglists-map-form
+   "Returns a map of symbol keys to arglists forms"
+   [vs]
+   (let [syms (map (fn [v]
+                     (if (vector? v)
+                       (first v)
+                       v))
+                   vs)
+         symbol-forms (map (fn [sym]
+                             `(quote ~sym))
+                           syms)
+         arglist-forms (map (fn [sym]
+                              `(:arglists (meta (var ~sym))))
+                            syms)]
+     (zipmap symbol-forms arglist-forms)))
+
 (defmacro with-stub!
   "Like with-stub, but throws an exception upon arity mismatch."
   [vs & body]
-  (let [syms (map (fn [v]
-                    (if (vector? v)
-                      (first v)
-                      v))
-                  vs)
-        symbol-forms (map (fn [sym]
-                            `(quote ~sym))
-                          syms)
-        arglists (map (fn [sym]
-                        `(:arglists (meta (var ~sym))))
-                      syms)
-        arglists-map-sym (gensym "arglists-map")]
-    `(let [~arglists-map-sym ~(zipmap symbol-forms arglists)]
+  (let [arglists-map-sym (gensym "arglists-map")]
+    `(let [~arglists-map-sym ~(arglists-map-form vs)]
        (with-redefs ~(->> (mapcat (fn [v]
                                     (if (vector? v)
                                       [(first v) `(stub! (var ~(first v))
@@ -117,7 +122,7 @@
                                                  (get ~arglists-map-sym (quote ~v)))]))
                                   vs)
                           (vec))
-        ~@body))))
+         ~@body))))
 
 (defmacro with-stub-ns
   "Takes a vector of namespaces and/or [namespace replacement] vectors.
