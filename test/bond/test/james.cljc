@@ -87,10 +87,29 @@
 (deftest stub!-works
   (testing "2 arity"
     (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
-                 ((bond/stub! #'two-arg-fn (fn [arg1] nil)) :foo))))
+                 ((bond/stub! #'two-arg-fn (fn [arg1] nil)) :foo)))
+    (is (= [:arg1 :arg2 :arg3]
+           ((bond/stub! #'some-multimethod
+                        (fn [arg1 arg2 arg3]
+                          [arg1 arg2 arg3]))
+            :arg1
+            :arg2
+            :arg3))))
   (testing "3 arity"
     (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
-                 ((bond/stub! #'some-multimethod (fn [arg1 arg2])) :arg1 :arg2)))))
+                 ((bond/stub! #'some-multimethod
+                              (fn [arg1 arg2])
+                              '([arg1 arg2 arg3]))
+                  :arg1
+                  :arg2)))
+    (is (= [:arg1 :arg2 :arg3]
+           ((bond/stub! #'some-multimethod
+                        (fn [arg1 arg2 arg3]
+                          [arg1 arg2 arg3])
+                        '([arg1 arg2 arg3]))
+            :arg1
+            :arg2
+            :arg3)))))
 
 (deftest spying-entire-namespaces-works
   (bond/with-spy-ns [bond.test.target]
