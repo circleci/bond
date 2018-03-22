@@ -68,7 +68,13 @@ Private functions can also be stubbed or spyed:
     (is (= [1] (-> #'foo/foo bond/calls first :args)))))
 ```
 
-There is also a `with-stub` macro which works like `with-stub!` but omits the argument check.
+Stubbing multimethods with `with-stub!` can be done by setting the `:arglists` metadata on the var:
+
+```clojure
+(defmulti ^{:arglists '([x y z])} my-multi (fn [x y z] x))
+```
+
+Unfortunately, since setting `:arglists` metadata on vars in ClojureScript is unsupported (as of `1.9.946`), multimethods can only be stubbed using the `with-stub` macro which works like `with-stub!` but omits the argument check.
 
 In addition to `with-spy` and `with-stub!`, Bond also provides `with-spy-ns`
 and `with-stub-ns` which can spy/stub every function in a namespace in one go:
