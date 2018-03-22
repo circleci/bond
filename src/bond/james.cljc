@@ -78,26 +78,51 @@
 (defn- args-match? [arg-count arglists]
   (some (partial arglist-match? arg-count) arglists))
 
-(defn stub! [v replacement]
-  (let [f (spy replacement)]
-    (with-meta (fn [& args]
-                 (if (args-match? (count args) (:arglists (meta v)))
-                   (apply f args)
-                   (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
-                               (count args) (str (:ns (meta v)) "/"
-                                                 (:name (meta v)))))))
-      (meta f))))
+(defn stub!
+  ([v replacement]
+   (stub! v replacement (:arglists (meta v))))
+  ([v replacement arglists]
+   (let [f (spy replacement)]
+     (with-meta (fn [& args]
+                  (if (args-match? (count args) arglists)
+                    (apply f args)
+                    (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
+                                (count args) (str (:ns (meta v)) "/"
+                                                  (:name (meta v)))))))
+       (meta f)))))
+
+(defn- arglists-map-form
+   "Returns a map of symbol keys to arglists forms"
+   [vs]
+   (let [syms (map (fn [v]
+                     (if (vector? v)
+                       (first v)
+                       v))
+                   vs)
+         symbol-forms (map (fn [sym]
+                             `(quote ~sym))
+                           syms)
+         arglist-forms (map (fn [sym]
+                              `(:arglists (meta (var ~sym))))
+                            syms)]
+     (zipmap symbol-forms arglist-forms)))
 
 (defmacro with-stub!
   "Like with-stub, but throws an exception upon arity mismatch."
   [vs & body]
-  `(with-redefs ~(->> (mapcat (fn [v]
-                                (if (vector? v)
-                                  [(first v) `(stub! (var ~(first v))
-                                                     ~(second v))]
-                                  [v `(stub! (var ~v) (constantly nil))])) vs)
-                      (vec))
-     ~@body))
+  (let [arglists-map-sym (gensym "arglists-map")]
+    `(let [~arglists-map-sym ~(arglists-map-form vs)]
+       (with-redefs ~(->> (mapcat (fn [v]
+                                    (if (vector? v)
+                                      [(first v) `(stub! (var ~(first v))
+                                                         ~(second v)
+                                                         (get ~arglists-map-sym (quote ~(first v))))]
+                                      [v `(stub! (var ~v)
+                                                 (constantly nil)
+                                                 (get ~arglists-map-sym (quote ~v)))]))
+                                  vs)
+                          (vec))
+         ~@body))))
 
 (defmacro with-stub-ns
   "Takes a vector of namespaces and/or [namespace replacement] vectors.

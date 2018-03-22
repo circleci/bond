@@ -80,6 +80,34 @@
                  (target/quuk 1)))
     (is (= [6 5] (target/quux 8 7 6 5)))))
 
+#?(:clj (defmulti ^{:arglists '([arg1 arg2])} two-arg-fn :dispatch-fn)
+   ;; setting :arglists metadata in cljs does not work
+   :cljs (defn two-arg-fn [arg1 arg2] nil))
+
+(deftest stub!-works
+  (testing "2 arity"
+    (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
+                 ((bond/stub! #'two-arg-fn (fn [arg1] nil)) :foo)))
+    (is (= [:arg1 :arg2]
+           ((bond/stub! #'two-arg-fn
+                        (fn [arg1 arg2]
+                          [arg1 arg2]))
+            :arg1
+            :arg2))))
+  (testing "3 arity"
+    (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
+                 ((bond/stub! #'two-arg-fn
+                              (fn [arg1])
+                              '([arg1 arg2]))
+                  :arg1)))
+    (is (= [:arg1 :arg2]
+           ((bond/stub! #'two-arg-fn
+                        (fn [arg1 arg2]
+                          [arg1 arg2])
+                        '([arg1 arg2]))
+            :arg1
+            :arg2)))))
+
 (deftest spying-entire-namespaces-works
   (bond/with-spy-ns [bond.test.target]
     (target/foo 1)
