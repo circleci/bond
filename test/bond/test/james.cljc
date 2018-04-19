@@ -103,32 +103,3 @@
     (bond/with-stub-ns [[bond.test.target (constantly 3)]]
       (is (= 3 (target/foo 10)))
       (is (= [10] (-> target/foo bond/calls first :args))))))
-
-(deftest called?-works
-  (testing "a spy was called"
-    (is (bond/called? target/foo (target/foo-caller 1))))
-
-  (testing "a spy was not called"
-    (is (not (bond/called? target/foo (target/bar 1))))))
-
-(deftest called-times?-works
-  (testing "the number of times a spy was called"
-    (is (bond/called-times? target/foo 1 (target/foo-caller 1)))
-    (is (bond/called-times? target/foo 2 (do (target/foo-caller 1)
-                                             (target/foo-caller 2)))))
-
-  (testing "the number of times a spy was not called"
-    (is (not (bond/called-times? target/foo 2 (target/foo-caller 1))))
-    (is (not (bond/called-times? target/foo 1 (do (target/foo-caller 1)
-                                                  (target/foo-caller 2)))))))
-
-(deftest called-with-args?-works
-  (testing "an assertion for calling a spy with args"
-    (is (bond/called-with-args? target/foo [[1]] (target/foo-caller 1)))
-    (is (not (bond/called-with-args? target/foo [[1]] (target/bar 1))))
-    (is (not (bond/called-with-args? target/foo [[2]] (target/foo-caller 1))))
-    (is (not (bond/called-with-args? target/foo [[1 2]] (target/foo-caller 1)))))
-
-  (testing "an assertion for calling a spy multiple times with args"
-    (is (bond/called-with-args? target/foo [[1] [2]] (do (target/foo-caller 1)
-                                                         (target/foo-caller 2))))))
