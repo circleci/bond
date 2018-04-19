@@ -8,6 +8,9 @@
   [x]
   (* 2 x))
 
+(defn foo-caller [x]
+  (foo x))
+
 (defn bar
   [x]
   (println "bar!") (* 2 x))

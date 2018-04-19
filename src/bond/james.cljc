@@ -115,3 +115,24 @@
                            (ns->fn-symbols n)))
                        namespaces)
      (do ~@body)))
+
+(defmacro called?
+  "TODO: write better documentation"
+  ([f & body]
+   `(with-spy [~f]
+      (do ~@body)
+      (pos? (-> ~f calls count)))))
+
+(defmacro called-times?
+  "TODO: write better documentation"
+  ([f times & body]
+   `(with-spy [~f]
+      (do ~@body)
+      (= ~times (-> ~f calls count)))))
+
+(defmacro called-with-args?
+  "TODO: write better documentation"
+  [f vargs & body]
+  `(with-spy [~f]
+     (do ~@body)
+     (= ~vargs (mapv :args (-> ~f calls)))))
