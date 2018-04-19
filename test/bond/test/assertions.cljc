@@ -6,6 +6,7 @@
 
 (deftest called?-works
   (testing "a spy was called"
+    (is (assertions/called? target/foo (target/foo 1)))
     (is (assertions/called? target/foo (target/foo-caller 1))))
 
   (testing "a spy was not called"
