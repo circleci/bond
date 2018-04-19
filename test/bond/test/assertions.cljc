@@ -1,6 +1,5 @@
 (ns bond.test.assertions
   (:require #?(:clj [clojure.test :refer (deftest is testing)])
-            [bond.james :as bond :include-macros true]
             [bond.assertions :as assertions :include-macros true]
             [bond.test.target :as target])
   #?(:cljs (:require-macros [cljs.test :refer (is deftest testing)])))
