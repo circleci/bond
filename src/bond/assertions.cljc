@@ -1,12 +1,13 @@
 (ns bond.assertions
-  (:require [bond.james :as bond]))
+  (:require [bond.james :as bond])
+  #?(:cljs (:require-macros [bond.james :as bond])))
 
 (defmacro called?
   "TODO: write better documentation"
   ([f & body]
    `(bond/with-spy [~f]
-     (do ~@body)
-     (pos? (-> ~f bond/calls count)))))
+      (do ~@body)
+      (pos? (-> ~f bond/calls count)))))
 
 (defmacro called-times?
   "TODO: write better documentation"
