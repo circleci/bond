@@ -23,4 +23,4 @@
   [f vargs & body]
   `(bond/with-spy [~f]
      (do ~@body)
-     (= ~vargs (mapv :args (-> ~f bond/calls)))))
+     (= ~vargs (->> ~f bond/calls (mapv :args)))))
