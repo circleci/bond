@@ -10,7 +10,7 @@
     (is (assertions/called? target/foo (target/foo-caller 1))))
 
   (testing "a spy was not called"
-    (is (not (assertions/called? target/foo (target/bar 1))))))
+    (is (not (assertions/called? target/bar (target/foo 1))))))
 
 (deftest called-times?-works
   (testing "the number of times a spy was called"
@@ -26,7 +26,7 @@
 (deftest called-with-args?-works
   (testing "an assertion for calling a spy with args"
     (is (assertions/called-with-args? target/foo [[1]] (target/foo-caller 1)))
-    (is (not (assertions/called-with-args? target/foo [[1]] (target/bar 1))))
+    (is (not (assertions/called-with-args? target/bar [[1]] (target/foo 1))))
     (is (not (assertions/called-with-args? target/foo [[2]] (target/foo-caller 1))))
     (is (not (assertions/called-with-args? target/foo [[1 2]] (target/foo-caller 1)))))
 
