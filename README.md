@@ -10,7 +10,7 @@ Bond is a spying and stubbing library, primarily intended for tests.
 ```clojure
 
 (ns test.foo
-  (:require [bond.james :as bond :refer [with-spy]))
+  (:require [bond.james :as bond :refer [with-spy]]))
 
 (defn foo [x]
   (let [shaken (with-out-str (prn :martini))]
@@ -31,7 +31,7 @@ Bond also provides `with-stub!`. It works the same as `with-spy`, but redefines 
 
 ```clojure
 (ns test.foo
-  (:require [bond.james :as bond :refer [with-stub!]))
+  (:require [bond.james :as bond :refer [with-stub!]]))
 
 (defn foo [x] ...)
 
