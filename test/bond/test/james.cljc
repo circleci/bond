@@ -67,6 +67,11 @@
       (is (= [4] (-> target/bar bond/calls second :args)))
       (is (= [5] (-> target/bar bond/calls last :args))))))
 
+(deftest stub!-complains-loudly-if-there-is-no-arglists
+  (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+               (bond/with-stub! [[target/without-arglists (constantly 42)]]
+                 (is false)))))
+
 (deftest stub!-throws-arity-exception
   (bond/with-stub! [[target/foo (constantly 9)]]
     (is (= 9 (target/foo 12)))
