@@ -79,6 +79,9 @@
   (some (partial arglist-match? arg-count) arglists))
 
 (defn stub! [v replacement]
+  (when (empty? (:arglists (meta v)))
+    (throw (new #?(:clj IllegalArgumentException :cljs js/Error)
+                "stub!/with-stub! may only be used on functions which include :arglists in their metadata. Use stub/with-stub instead.")))
   (let [f (spy replacement)]
     (with-meta (fn [& args]
                  (if (args-match? (count args) (:arglists (meta v)))

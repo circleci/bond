@@ -23,3 +23,7 @@
 (defmacro baz
   [x]
   `(* ~x 2))
+
+(def without-arglists
+  (fn [x]
+    (* 2 x)))
