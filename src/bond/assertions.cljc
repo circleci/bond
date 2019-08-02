@@ -1,6 +1,5 @@
 (ns bond.assertions
-  (:require [bond.james :as bond])
-  #?(:cljs (:require-macros [bond.james :as bond])))
+  (:require [bond.james :as bond]))
 
 (defn called?
   "An assertion to check if `f` was called at least 1 time."
