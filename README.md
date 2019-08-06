@@ -4,7 +4,7 @@ Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)]
 Bond is a spying and stubbing library, primarily intended for tests.
 
 ```clojure
-[circleci/bond "0.3.1"]
+[circleci/bond "0.4.0"]
 ```
 
 ```clojure
