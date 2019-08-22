@@ -1,7 +1,7 @@
 (ns bond.james)
 
 (defn spy
-  "wrap f, returning a new fn that keeping track of its call count and arguments"
+  "wrap f, returning a new fn that keeps track of its call count and arguments."
   [f]
   (let [calls (atom [])]
     (with-meta (fn [& args]
@@ -20,7 +20,7 @@
 (defn calls
   "Takes one arg, a fn that has previously been spied. Returns a seq
   of maps, one per call. Each map contains the keys :args and :return
-  or :throw"
+  or :throw."
   [f]
   (some-> (if (var? f) @f f)
           meta
@@ -40,7 +40,7 @@
 
 (defmacro with-spy
   "Takes a vector of fn vars (vars that resolve to fns). Modifies the
-  fn to track call counts, but does not change the fn's behavior"
+  fn to track call counts, but does not change the fn's behavior."
   [vs & body]
   `(with-redefs ~(->> (mapcat (fn [v]
                                 [v `(spy (deref ~(list 'var v)))]) vs)
@@ -57,9 +57,9 @@
 (defmacro with-stub
   "Takes a vector of fn vars and/or [fn replacement] vectors.
 
-  Replaces each fn with it's replacement. If a replacement is not specified for
-  a fn it's replaced with one that takes any number of args and returns nil.
-  Also spies the stubbed-fn"
+  Replaces each fn with its replacement. If a replacement is not specified for
+  a fn it is replaced with one that takes any number of args and returns nil.
+  Also spies the stubbed-fn."
   [vs & body]
 
   `(with-redefs ~(->> (mapcat (fn [v]
