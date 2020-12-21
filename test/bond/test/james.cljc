@@ -16,6 +16,10 @@
               (is (= {:args [3 4] :throw exception}
                      (-> target/foo bond/calls last)))))))
 
+(deftest calls-fails-on-unspied-fns
+  (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+               (bond/calls target/foo))))
+
 (deftest spy-can-spy-private-fns
   (bond/with-spy [target/private-foo]
     (is (= 4 (#'target/private-foo 2)))

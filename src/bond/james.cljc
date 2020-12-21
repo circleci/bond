@@ -20,12 +20,14 @@
 (defn calls
   "Takes one arg, a fn that has previously been spied. Returns a seq
   of maps, one per call. Each map contains the keys :args and :return
-  or :throw."
+  or :throw. If the fn has not been spied, throws an exception."
   [f]
-  (some-> (if (var? f) @f f)
-          meta
-          ::calls
-          deref))
+  (if-some [calls (some-> (if (var? f) @f f)
+                          meta
+                          ::calls)]
+    @calls
+    (throw (new #?(:clj IllegalArgumentException :cljs js/Error)
+                "The argument is not a spied function. Calls of an unspied function are not tracked and are therefore not known."))))
 
 (defn ns->fn-symbols
   "A utility function to get a sequence of fully-qualified symbols for all the
