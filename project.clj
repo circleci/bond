@@ -16,4 +16,9 @@
                                       "resources/test/test.html"]}}
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.7.0"]
                                   [org.clojure/clojurescript "1.7.228"]
-                                  [com.cemerick/clojurescript.test "0.3.0"]]}})
+                                  [com.cemerick/clojurescript.test "0.3.0"]
+                                  ;; by default, lein-cloverage will
+                                  ;; use the latest release of
+                                  ;; cloverage. Specify the version of
+                                  ;; cloverage to override this.
+                                  [cloverage "1.0.9"]]}})
