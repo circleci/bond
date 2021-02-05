@@ -18,7 +18,11 @@
 
   (testing "a spy was not called"
     (bond/with-spy [target/foo]
-      (is (not (assertions/called? target/foo))))))
+      (is (not (assertions/called? target/foo)))))
+
+  (testing "called? fails when its argument is not spied"
+    (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+                 (assertions/called? target/foo)))))
 
 (deftest called-times?-works
   (testing "the number of times a spy was called"
@@ -33,11 +37,16 @@
       (let [_ (target/foo-caller 1)]
         (is (not (assertions/called-times? target/foo 2))))
       (let [_ (target/foo-caller 2)]
-        (is (not (assertions/called-times? target/foo 1)))))))
+        (is (not (assertions/called-times? target/foo 1))))))
+
+  (testing "called-times? fails when its argument is not spied"
+    (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+                 (assertions/called-times? target/foo 0)))))
 
 (deftest called-with-args?-works
   (testing "an assertion for calling a spy with args"
-    (bond/with-spy [target/foo]
+    (bond/with-spy [target/foo
+                    target/bar]
       (let [_ (target/foo-caller 1)]
         (is (assertions/called-with-args? target/foo [[1]]))
         (is (not (assertions/called-with-args? target/foo [[2]])))
@@ -48,4 +57,8 @@
     (bond/with-spy [target/foo]
       (let [_ (do (target/foo-caller 1)
                   (target/foo-caller 2))]
-        (is (assertions/called-with-args? target/foo [[1] [2]]))))))
+        (is (assertions/called-with-args? target/foo [[1] [2]])))))
+
+  (testing "called-with-args? fails when its argument is not spied"
+    (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+                 (assertions/called-with-args? target/foo [])))))
