@@ -3,8 +3,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies []
-  :plugins [[lein-test-out "0.3.1" :exclusions [org.clojure/clojure]]
-            [lein-cloverage "1.0.9"]]
+  :plugins [[lein-cloverage "1.0.9"]]
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.7.0"]
                                   ;; by default, lein-cloverage will
                                   ;; use the latest release of
