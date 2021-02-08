@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  test-clj:
+  test:
     docker:
       - image: clojure:lein-2.7.1
     steps:
@@ -29,36 +29,9 @@ jobs:
             - ~/.m2
       - store_artifacts:
           path: target/coverage
-  test-cljs:
-    docker:
-      - image: clojure:lein-2.7.1
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - cljs-jars-v2-{{ checksum "project.clj" }}-{{ checksum "package.json" }}
-            - cljs-jars-v2-
-      - run:
-          name: Download dependencies
-          command: lein deps
-      - run:
-          name: Install phantomjs
-          command: |
-            curl -sL https://deb.nodesource.com/setup_8.x | bash -
-            apt-get install -y nodejs
-            npm install
-      - run:
-          name: Run the tests
-          command: lein cljsbuild test
-      - save_cache:
-          key: cljs-jars-v2-{{ checksum "project.clj" }}-{{ checksum "package.json" }}
-          paths:
-            - ~/.m2
-            - ~/node_modules
 
 workflows:
   version: 2
-  run_all_tests:
+  test:
     jobs:
-      - test-clj
-      - test-cljs
+      - test

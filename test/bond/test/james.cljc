@@ -1,8 +1,7 @@
 (ns bond.test.james
-  (:require #?(:clj [clojure.test :refer (deftest is testing)])
+  (:require [clojure.test :refer (deftest is testing)]
             [bond.james :as bond :include-macros true]
-            [bond.test.target :as target])
-  #?(:cljs (:require-macros [cljs.test :refer (is deftest testing)])))
+            [bond.test.target :as target]))
 
 (deftest spy-logs-args-and-results
   (bond/with-spy [target/foo]
@@ -11,13 +10,12 @@
     (is (= [{:args [1] :return 2}
             {:args [2] :return 4}]
            (bond/calls target/foo)))
-    ;; cljs doesn't throw ArityException
-    #?(:clj (let [exception (is (thrown? clojure.lang.ArityException (target/foo 3 4)))]
-              (is (= {:args [3 4] :throw exception}
-                     (-> target/foo bond/calls last)))))))
+    (let [exception (is (thrown? clojure.lang.ArityException (target/foo 3 4)))]
+      (is (= {:args [3 4] :throw exception}
+             (-> target/foo bond/calls last))))))
 
 (deftest calls-fails-on-unspied-fns
-  (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+  (is (thrown? IllegalArgumentException
                (bond/calls target/foo))))
 
 (deftest spy-can-spy-private-fns
@@ -72,7 +70,7 @@
       (is (= [5] (-> target/bar bond/calls last :args))))))
 
 (deftest stub!-complains-loudly-if-there-is-no-arglists
-  (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+  (is (thrown? IllegalArgumentException
                (bond/with-stub! [[target/without-arglists (constantly 42)]]
                  (is false)))))
 
@@ -83,9 +81,9 @@
   (bond/with-stub! [target/bar
                     target/quuk
                     [target/quux (fn [_ _ & x] x)]]
-    (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
+    (is (thrown? clojure.lang.ArityException
                  (target/bar 1 2)))
-    (is (thrown? #?(:clj clojure.lang.ArityException :cljs js/Error)
+    (is (thrown? clojure.lang.ArityException
                  (target/quuk 1)))
     (is (= [6 5] (target/quux 8 7 6 5)))))
 
