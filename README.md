@@ -92,6 +92,17 @@ and `with-stub-ns` which can spy/stub every function in a namespace in one go:
     (is (= :baz (bar)))))
 ```
 
+Releasing
+---------
+
+New git tags are automatically published to [clojars](https://clojars.org/circleci/bond).
+
+The following should be updated on the main/master branch before tagging:
+
+- `project.clj` - version
+- `README.md` - dependency coordinates
+- `CHANGELOG.md` - summary of changes
+
 License
 -------
 
