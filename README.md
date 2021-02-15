@@ -4,7 +4,7 @@ Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)]
 Bond is a spying and stubbing library, primarily intended for tests.
 
 ```clojure
-[circleci/bond "0.4.0"]
+[circleci/bond "0.5.0"]
 ```
 
 ```clojure
@@ -91,6 +91,17 @@ and `with-stub-ns` which can spy/stub every function in a namespace in one go:
     (is (= :baz (foo)))
     (is (= :baz (bar)))))
 ```
+
+Releasing
+---------
+
+New git tags are automatically published to [clojars](https://clojars.org/circleci/bond).
+
+The following should be updated on the main/master branch before tagging:
+
+- `project.clj` - version
+- `README.md` - dependency coordinates
+- `CHANGELOG.md` - summary of changes
 
 License
 -------

@@ -29,9 +29,33 @@ jobs:
             - ~/.m2
       - store_artifacts:
           path: target/coverage
+  publish:
+    docker:
+      - image: clojure:lein-2.7.1
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - clj-jars-v2-{{ checksum "project.clj" }}
+            - clj-jars-v2-
+      - run:
+          name: Download dependencies
+          command: lein deps
+      - run:
+          name: Publish to clojars
+          command: lein deploy
 
 workflows:
   version: 2
-  test:
+  test-and-publish:
     jobs:
       - test
+      - publish:
+          context: clojars-publish
+          requires:
+            - test
+          filters:
+            tags:
+              only: /.*/
+            branches:
+              ignore: /.*/
