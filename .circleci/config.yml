@@ -49,7 +49,10 @@ workflows:
   version: 2
   test-and-publish:
     jobs:
-      - test
+      - test:
+          filters:
+            tags:
+              only: /.*/
       - publish:
           context: clojars-publish
           requires:
