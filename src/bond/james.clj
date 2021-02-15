@@ -11,7 +11,7 @@
                      (swap! calls conj {:args args
                                         :return resp})
                      resp)
-                   (catch #?(:clj Exception :cljs js/Error) e
+                   (catch Exception e
                      (swap! calls conj {:args args
                                         :throw e})
                      (throw e))))
@@ -26,7 +26,7 @@
                           meta
                           ::calls)]
     @calls
-    (throw (new #?(:clj IllegalArgumentException :cljs js/Error)
+    (throw (new IllegalArgumentException
                 "The argument is not a spied function. Calls of an unspied function are not tracked and are therefore not known."))))
 
 (defn ns->fn-symbols
@@ -82,13 +82,13 @@
 
 (defn stub! [v replacement]
   (when (empty? (:arglists (meta v)))
-    (throw (new #?(:clj IllegalArgumentException :cljs js/Error)
+    (throw (new IllegalArgumentException
                 "stub!/with-stub! may only be used on functions which include :arglists in their metadata. Use stub/with-stub instead.")))
   (let [f (spy replacement)]
     (with-meta (fn [& args]
                  (if (args-match? (count args) (:arglists (meta v)))
                    (apply f args)
-                   (throw (new #?(:clj clojure.lang.ArityException :cljs js/Error)
+                   (throw (new clojure.lang.ArityException
                                (count args) (str (:ns (meta v)) "/"
                                                  (:name (meta v)))))))
       (meta f))))

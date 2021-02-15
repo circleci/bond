@@ -1,9 +1,8 @@
 (ns bond.test.assertions
-  (:require #?(:clj [clojure.test :refer (deftest is testing)])
+  (:require [clojure.test :refer (deftest is testing)]
             [bond.assertions :as assertions]
             [bond.james :as bond :include-macros true]
-            [bond.test.target :as target])
-  #?(:cljs (:require-macros [cljs.test :refer (is deftest testing)])))
+            [bond.test.target :as target]))
 
 (deftest called?-works
   (testing "a spy was called directly"
@@ -21,7 +20,7 @@
       (is (not (assertions/called? target/foo)))))
 
   (testing "called? fails when its argument is not spied"
-    (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+    (is (thrown? IllegalArgumentException
                  (assertions/called? target/foo)))))
 
 (deftest called-times?-works
@@ -40,7 +39,7 @@
         (is (not (assertions/called-times? target/foo 1))))))
 
   (testing "called-times? fails when its argument is not spied"
-    (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+    (is (thrown? IllegalArgumentException
                  (assertions/called-times? target/foo 0)))))
 
 (deftest called-with-args?-works
@@ -60,5 +59,5 @@
         (is (assertions/called-with-args? target/foo [[1] [2]])))))
 
   (testing "called-with-args? fails when its argument is not spied"
-    (is (thrown? #?(:clj IllegalArgumentException :cljs js/Error)
+    (is (thrown? IllegalArgumentException
                  (assertions/called-with-args? target/foo [])))))
