@@ -1,13 +1,15 @@
-version: 2
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.1.3
 
 jobs:
-  lint-kondo-and-eastwood:
+  clj-kondo:
     docker:
       - image: cljkondo/clj-kondo:2021.02.13
     steps:
       - checkout
       - run: clj-kondo --lint .
-      - run: lein eastwood
 
   test:
     docker:
@@ -22,15 +24,16 @@ jobs:
           name: Download dependencies
           command: lein deps
       - run:
+          name: Eastwood
+          command: lein eastwood
+      - run:
           name: Run the tests
-          command: lein trampoline test
+          command: lein test-ci
       - run:
           name: Code Coverage
-          command: lein trampoline cloverage --codecov
-      - run:
-          name: Upload Coverage
-          command: bash <(curl -s https://codecov.io/bash) -f target/coverage/codecov.json
-          when: always
+          command: lein cloverage --codecov
+      - codecov/upload:
+          file: target/coverage/codecov.json
       - save_cache:
           key: clj-jars-v2-{{ checksum "project.clj" }}
           paths:
@@ -57,7 +60,7 @@ workflows:
   version: 2
   test-and-publish:
     jobs:
-      - lint-kondo-and-eastwood
+      - clj-kondo
       - test:
           filters:
             tags:
