@@ -1,7 +1,7 @@
-(ns bond.test.james
+(ns bond.james-test
   (:require [clojure.test :refer (deftest is testing)]
             [bond.james :as bond :include-macros true]
-            [bond.test.target :as target]))
+            [bond.target-data :as target]))
 
 (deftest spy-logs-args-and-results
   (bond/with-spy [target/foo]
@@ -88,7 +88,7 @@
     (is (= [6 5] (target/quux 8 7 6 5)))))
 
 (deftest spying-entire-namespaces-works
-  (bond/with-spy-ns [bond.test.target]
+  (bond/with-spy-ns [bond.target-data]
     (target/foo 1)
     (target/foo 2)
     (is (= [{:args [1] :return 2}
@@ -98,10 +98,10 @@
 
 (deftest stubbing-entire-namespaces-works
   (testing "without replacements"
-    (bond/with-stub-ns [bond.test.target]
+    (bond/with-stub-ns [bond.target-data]
       (is (nil? (target/foo 10)))
       (is (= [10] (-> target/foo bond/calls first :args)))))
   (testing "with replacements"
-    (bond/with-stub-ns [[bond.test.target (constantly 3)]]
+    (bond/with-stub-ns [[bond.target-data (constantly 3)]]
       (is (= 3 (target/foo 10)))
       (is (= [10] (-> target/foo bond/calls first :args))))))
