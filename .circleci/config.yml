@@ -1,6 +1,14 @@
 version: 2
 
 jobs:
+  lint-kondo-and-eastwood:
+    docker:
+      - image: cljkondo/clj-kondo:2021.02.13
+    steps:
+      - checkout
+      - run: clj-kondo --lint .
+      - run: lein eastwood
+
   test:
     docker:
       - image: clojure:lein-2.7.1
@@ -49,6 +57,7 @@ workflows:
   version: 2
   test-and-publish:
     jobs:
+      - lint-kondo-and-eastwood
       - test:
           filters:
             tags:

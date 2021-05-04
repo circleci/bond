@@ -1,4 +1,6 @@
 (ns bond.james-test
+  {:clj-kondo/config '{:linters {:private-call {:level :off}
+                                 :invalid-arity {:level :off}}}}
   (:require [clojure.test :refer (deftest is testing)]
             [bond.james :as bond :include-macros true]
             [bond.target-data :as target]))
@@ -72,7 +74,7 @@
 (deftest stub!-complains-loudly-if-there-is-no-arglists
   (is (thrown? IllegalArgumentException
                (bond/with-stub! [[target/without-arglists (constantly 42)]]
-                 (is false)))))
+                 (throw (Exception. "shouldn't get here"))))))
 
 (deftest stub!-throws-arity-exception
   (bond/with-stub! [[target/foo (constantly 9)]]
