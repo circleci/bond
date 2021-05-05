@@ -1,8 +1,8 @@
-(ns bond.test.assertions
+(ns bond.assertions-test
   (:require [clojure.test :refer (deftest is testing)]
             [bond.assertions :as assertions]
             [bond.james :as bond :include-macros true]
-            [bond.test.target :as target]))
+            [bond.target-data :as target]))
 
 (deftest called?-works
   (testing "a spy was called directly"
