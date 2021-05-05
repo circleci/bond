@@ -9,7 +9,7 @@
             [jonase/eastwood "0.3.14" :exclusions [org.clojure/clojure]]]
 
   :eastwood {:exclude-linters
-             [ ;; clj-kondo will catch the wrong-arity cases
+             [;; clj-kondo will catch the wrong-arity cases
               ;; (eastwood won't let us turn this lint off for a single namespace)
               :wrong-arity]}
 

@@ -1,7 +1,7 @@
 (ns bond.target-data
   "Reference def targets for bond to test against."
-  {:clj-kondo/config '{:linters {:unused-binding {:level :off}
-                                 :unused-private-var {:level :off}}}})
+  {:clj-kondo/config {:linters {:unused-binding {:level :off}
+                                :unused-private-var {:level :off}}}})
 
 (defn foo
   [x]

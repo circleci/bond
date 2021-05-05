@@ -1,6 +1,6 @@
 (ns bond.james-test
-  {:clj-kondo/config '{:linters {:private-call {:level :off}
-                                 :invalid-arity {:level :off}}}}
+  {:clj-kondo/config {:linters {:private-call {:level :off}
+                                :invalid-arity {:level :off}}}}
   (:require [clojure.test :refer (deftest is testing)]
             [bond.james :as bond :include-macros true]
             [bond.target-data :as target]))
