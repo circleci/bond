@@ -32,8 +32,7 @@ jobs:
       - run:
           name: Code Coverage
           command: lein cloverage --codecov
-      - codecov/upload:
-          file: target/coverage/codecov.json
+      - codecov/upload
       - save_cache:
           key: clj-jars-v2-{{ checksum "project.clj" }}
           paths:
