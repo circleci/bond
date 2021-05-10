@@ -1,4 +1,4 @@
-Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)](https://circleci.com/gh/circleci/bond) [![codecov.io](https://codecov.io/github/circleci/bond/coverage.svg?branch=master)](https://codecov.io/github/circleci/bond?branch=master)
+Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)](https://circleci.com/gh/circleci/bond) [![codecov.io](https://codecov.io/github/circleci/bond/coverage.svg?branch=main)](https://codecov.io/github/circleci/bond?branch=main)
 ====
 
 Bond is a spying and stubbing library, primarily intended for tests.
@@ -97,7 +97,7 @@ Releasing
 
 New git tags are automatically published to [clojars](https://clojars.org/circleci/bond).
 
-The following should be updated on the main/master branch before tagging:
+The following should be updated on the `main` branch before tagging:
 
 - `project.clj` - version
 - `README.md` - dependency coordinates
