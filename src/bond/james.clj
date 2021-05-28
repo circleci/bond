@@ -1,5 +1,11 @@
 (ns bond.james)
 
+(defn- check-allowed [n v]
+  (when (and (even? n) (:disallow-mock (meta (resolve v))))
+    (throw (IllegalArgumentException.
+            (str "Tried to mock " v ", which is disallowed."))))
+  v)
+
 (defn spy
   "wrap f, returning a new fn that keeps track of its call count and arguments."
   [f]
@@ -67,7 +73,9 @@
   `(with-redefs ~(->> (mapcat (fn [v]
                                 (if (vector? v)
                                   [(first v) `(spy ~(second v))]
-                                  [v `(spy (constantly nil))])) vs)
+                                  [v `(spy (constantly nil))]))
+                              vs)
+                      (map-indexed check-allowed)
                       (vec))
      ~@body))
 
@@ -101,6 +109,7 @@
                                   [(first v) `(stub! (var ~(first v))
                                                      ~(second v))]
                                   [v `(stub! (var ~v) (constantly nil))])) vs)
+                      (map-indexed check-allowed)
                       (vec))
      ~@body))
 

@@ -2,6 +2,7 @@
   {:clj-kondo/config {:linters {:private-call {:level :off}
                                 :invalid-arity {:level :off}}}}
   (:require [clojure.test :refer (deftest is testing)]
+            [clojure.stacktrace :as stacktrace]
             [bond.james :as bond :include-macros true]
             [bond.target-data :as target]))
 
@@ -107,3 +108,20 @@
     (bond/with-stub-ns [[bond.target-data (constantly 3)]]
       (is (= 3 (target/foo 10)))
       (is (= [10] (-> target/foo bond/calls first :args))))))
+
+(defn ^:disallow-mock no-mock [x]
+  (+ x 3))
+
+(defn disallowed? [form]
+  (try (eval form)
+       false
+       (catch Exception e
+         (re-find #"disallowed" (str (stacktrace/root-cause e))))))
+
+(deftest disallow-mock-works
+  (is (disallowed? `(bond/with-stub [no-mock]
+                      (println (no-mock 33)))))
+  (is (disallowed? `(bond/with-stub [[no-mock #(+ 2 %)]]
+                      (println (no-mock 33)))))
+  (is (disallowed? `(bond/with-stub! [[no-mock #(+ 2 %)]]
+                      (println (no-mock 33))))))

@@ -92,6 +92,20 @@ and `with-stub-ns` which can spy/stub every function in a namespace in one go:
     (is (= :baz (bar)))))
 ```
 
+Sometimes you have functions which you want to prevent from being
+mocked. You can attach `:disallow-mock` functions to prevent Bond from
+mocking these. (They can still be replaced using `with-redefs` of course.)
+
+```clojure
+(defn ^:disallow-mock important-fn [x]
+  (spec-check x)
+  (send-over-network! x))
+```
+
+In the case above, you want to make sure that `send-over-network!`
+gets mocked, not `important-fn`, since mocking `important-fn` means
+that the tests will not run the spec checks.
+
 Releasing
 ---------
 
