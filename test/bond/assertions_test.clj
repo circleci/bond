@@ -27,7 +27,7 @@
   (testing "the number of times a spy was called"
     (bond/with-spy [target/foo]
       (let [_ (target/foo-caller 1)]
-        (is (assertions/called-times? target/foo 1 )))
+        (is (assertions/called-times? target/foo 1)))
       (let [_ (target/foo 2)]
         (is (assertions/called-times? target/foo 2)))))
 
@@ -61,3 +61,54 @@
   (testing "called-with-args? fails when its argument is not spied"
     (is (thrown? IllegalArgumentException
                  (assertions/called-with-args? target/foo [])))))
+
+(deftest called-once-with-args?-works
+  (testing "an assertion for calling a spy once with args"
+    (bond/with-spy [target/foo]
+      (let [_ (target/foo 1)]
+        (is (assertions/called-once-with-args? target/foo [1]))
+        (is (not (assertions/called-once-with-args? target/foo [2]))))))
+
+  (testing "an assertion for calling a spy indirectly once with args"
+    (bond/with-spy [target/foo]
+      (let [_ (target/foo-caller 1)]
+        (is (assertions/called-once-with-args? target/foo [1]))
+        (is (not (assertions/called-once-with-args? target/foo [2]))))))
+
+  (testing "an assertion for a spy that was not called"
+    (bond/with-spy [target/foo]
+      (is (not (assertions/called-once-with-args? target/foo [])))))
+
+  (testing "called-once-with-args? fails when its argument is not spied"
+    (is (thrown? IllegalArgumentException
+                 (assertions/called-once-with-args? target/foo [])))))
+
+(deftest called-at-least-once-with-args?-works
+  (testing "an assertion for calling a spy multiple times"
+    (bond/with-spy [target/foo]
+      (let [_ (do (target/foo 1)
+                  (target/foo 2))]
+        (is (assertions/called-at-least-once-with-args? target/foo [1]))
+        (is (assertions/called-at-least-once-with-args? target/foo [2]))
+        (is (not (assertions/called-at-least-once-with-args? target/foo [3]))))))
+
+  (testing "an assertion for calling a spy multiple times with the same value"
+    (bond/with-spy [target/foo]
+      (let [_ (do (target/foo 1)
+                  (target/foo 1))]
+        (is (assertions/called-at-least-once-with-args? target/foo [1]))
+        (is (not (assertions/called-at-least-once-with-args? target/foo [2]))))))
+
+  (testing "an assertion for calling a spy once"
+    (bond/with-spy [target/foo]
+      (let [_ (target/foo 1)]
+        (is (assertions/called-at-least-once-with-args? target/foo [1]))
+        (is (not (assertions/called-at-least-once-with-args? target/foo [2]))))))
+
+  (testing "an assertion for a spy that was not called"
+    (bond/with-spy [target/foo]
+      (is (not (assertions/called-at-least-once-with-args? target/foo [])))))
+
+  (testing "called-at-least-once-with-args? fails when its argument is not spied"
+    (is (thrown? IllegalArgumentException
+                 (assertions/called-at-least-once-with-args? target/foo [])))))
