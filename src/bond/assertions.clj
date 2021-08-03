@@ -14,7 +14,8 @@
 (defn called-with-args?
   "An assertion to check if `f` was called with `vargs`.
 
-  `vargs` should be a vector of args [args-first-call args-second-call ...] to allow for the checking of multiple calls of `f`."
+  `vargs` should be a vector of args [args-first-call args-second-call ...] to allow for the checking of multiple calls of `f`.
+   Note that this method asserts about every call to `f`."
   [f vargs]
   (= vargs (->> f bond/calls (mapv :args))))
 
@@ -24,12 +25,12 @@
    `args` should be a vector/coll of args [arg1 arg2 arg3] to compare directly to the value of `:args` from `bond/calls`"
   [f args]
   (and (called-times? f 1)
-       (= args (-> f bond/calls first :args))))
+       (called-with-args? f [args])))
 
 (defn called-at-least-once-with-args?
   "An assertion to check if `f` has been called at least once with `args`.
 
    `args` should be a vector/coll of args [arg1 arg2 {:arg3 arg3}] to compare directly to the value of `:args` from `bond/calls`"
   [f args]
-  (let [all-calls (into #{} (map :args (bond/calls f)))]
-    (contains? all-calls args)))
+  (boolean (some (fn [call] (= (:args call) args))
+                 (bond/calls f))))
