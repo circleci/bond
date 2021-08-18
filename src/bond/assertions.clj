@@ -24,8 +24,7 @@
    
    `args` should be a vector/coll of args [arg1 arg2 arg3] to compare directly to the value of `:args` from `bond/calls`"
   [f args]
-  (and (called-times? f 1)
-       (called-with-args? f [args])))
+  (called-with-args? f [args]))
 
 (defn called-at-least-once-with-args?
   "An assertion to check if `f` has been called at least once with `args`.
