@@ -51,9 +51,9 @@ jobs:
       - run:
           name: Download dependencies
           command: lein deps
-      - run:
-          name: Publish to clojars
-          command: lein deploy
+      # - run:
+      #     name: Publish to clojars
+      #     command: lein deploy
 
 workflows:
   version: 2
