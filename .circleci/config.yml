@@ -71,5 +71,5 @@ workflows:
           filters:
             tags:
               only: /.*/
-            branches:
-              ignore: /.*/
+                # branches:
+                # ignore: /.*/
