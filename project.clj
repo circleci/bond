@@ -22,7 +22,6 @@
                        "--no-randomize"]
             "test-ci" ["test"
                        "--plugin" "cloverage"
-                       "--codecov" "--no-cov-html" "--no-cov-summary"
                        "--plugin" "kaocha.plugin/profiling"
                        "--plugin" "kaocha.plugin/junit-xml"
                        "--junit-xml-file" "target/test-results/results.xml"]}

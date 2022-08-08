@@ -1,8 +1,5 @@
 version: 2.1
 
-orbs:
-  codecov: codecov/codecov@1.2.2
-
 jobs:
   clj-kondo:
     docker:
@@ -31,8 +28,7 @@ jobs:
           command: lein test-ci
       - run:
           name: Code Coverage
-          command: lein cloverage --codecov
-      - codecov/upload
+          command: lein cloverage
       - save_cache:
           key: clj-jars-v2-{{ checksum "project.clj" }}
           paths:

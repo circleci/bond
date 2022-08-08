@@ -1,4 +1,4 @@
-Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)](https://circleci.com/gh/circleci/bond) [![codecov.io](https://codecov.io/github/circleci/bond/coverage.svg?branch=main)](https://codecov.io/github/circleci/bond?branch=main)
+Bond [![CircleCI Status](https://circleci.com/gh/circleci/bond.png?style=badge)](https://circleci.com/gh/circleci/bond)
 ====
 
 Bond is a spying and stubbing library, primarily intended for tests.
@@ -41,14 +41,14 @@ Bond also provides `with-stub!`. It works the same as `with-spy`, but redefines 
   (with-stub! [[foo (fn [x] "foo")]
                [bar (fn [y] "bar")]]
     (is (= ["foo" "bar"] [(foo 1) (bar 2)]))))
-    
+
 (deftest consecutive-stubbing
-  (with-stub! [[foo [(fn [x] "foo1") 
-                     (fn [x] "foo2") 
+  (with-stub! [[foo [(fn [x] "foo1")
+                     (fn [x] "foo2")
                      (fn [x] "foo3")]]
                [bar (fn [y] "bar")]]
     (is (= ["foo1" "foo2" "foo3" "bar"] [(foo 1) (foo 1) (foo 1) (bar 2)]))))
-    
+
 ```
 
 Private functions can also be stubbed or spyed:
