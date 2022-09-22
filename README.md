@@ -25,7 +25,7 @@ Bond is a spying and stubbing library, primarily intended for tests.
     (is (= 1 (-> foo bond/calls count)))))
 ```
 
-Bond provides one main macro, `with-spy`. It takes a vector of defn vars (vars that resolve to fns). Each var will be redefined for the scope of the macro, wrapping the function to track arguments and call counts. At any point during the scope, you can call `(bond/calls f)`, where `f` is a spied fn. `calls` returns a seq of maps, one for each call to `f`b. Each map contains the keys `:args`, a seq of args the fn was called with, and one of `:return` or `:throw`.
+Bond provides one main macro, `with-spy`. It takes a vector of defn vars (vars that resolve to fns). Each var will be redefined for the scope of the macro, wrapping the function to track arguments and call counts. At any point during the scope, you can call `(bond/calls f)`, where `f` is a spied fn. `calls` returns a seq of maps, one for each call to `f`. Each map contains the keys `:args`, a seq of args the fn was called with, and one of `:return` or `:throw`.
 
 Bond also provides `with-stub!`. It works the same as `with-spy`, but redefines the function to return `(constantly nil)` (default), while also spying on it. This is generally preferable to Clojure's built-in `with-redefs` macro since it will throw an exception if the mocked function is called with the wrong number of arguments. You can specify an arbitrary function instead of the default `(constantly nil)` by providing a `[fn-var replacement-fn]` vector in place of just the fn name:
 
