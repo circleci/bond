@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: bond
+  description: Bond is a spying and stubbing library, primarily intended for tests.
+  annotations:
+    circleci.com/project-slug: github/circleci/bond
+    snyk.io/org-name: circleci-78h
+  links:
+    - title: Documentation
+      url: https://github.com/circleci/bond#readme
+      icon: docs
+spec:
+  type: library
+  lifecycle: production
+  owner: backplane
