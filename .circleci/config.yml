@@ -68,10 +68,7 @@ jobs:
 #      - run:
 #          name: Pom
 #          command: lein pom
-      - snyk-vuln-scanner/vuln-scan:
-          context: [org-global, github-readonly]
-          debug: true
-          upload-on-merge: false
+
 
 workflows:
   version: 2
@@ -93,4 +90,7 @@ workflows:
               ignore: /.*/
   snyk-test:
     jobs:
-      - snyk-test
+      - snyk-vuln-scanner/vuln-scan:
+          context: [org-global, github-readonly]
+          debug: true
+          upload-on-merge: false
