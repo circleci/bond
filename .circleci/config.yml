@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  snyk-vuln-scanner: cci-internal/snyk-vuln-scanner@dev:31edd14b29ba6c7c888cd101eac0cb6ff418ca74
+  snyk-vuln-scanner: cci-internal/snyk-vuln-scanner@dev:30a2c0320c5d93c3b9bc89d712639d3ba6a4b82b
 
 jobs:
   clj-kondo:
