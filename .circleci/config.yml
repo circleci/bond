@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  snyk-vuln-scanner: cci-internal/snyk-vuln-scanner@dev:6ad3b98806b042a41bb1da291a1590b0562302ea
+  snyk-vuln-scanner: cci-internal/snyk-vuln-scanner@dev:358b903c2dbd7ddc1a8f2e17d398f0908724f44c
 
 jobs:
   clj-kondo:
@@ -93,4 +93,3 @@ workflows:
       - snyk-vuln-scanner/vuln-scan:
           context: [org-global, github-readonly]
           debug: true
-          upload-on-merge: false
