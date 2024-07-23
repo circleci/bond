@@ -2,7 +2,7 @@
   {:clj-kondo/config {:linters {:private-call {:level :off}
                                 :invalid-arity {:level :off}}}}
   (:require [clojure.test :refer (deftest is testing)]
-            [bond.james :as bond :include-macros true]
+            [bond.james :as bond]
             [bond.target-data :as target]))
 
 (deftest spy-logs-args-and-results
