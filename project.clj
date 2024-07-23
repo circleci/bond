@@ -5,8 +5,8 @@
 
   :dependencies []
 
-  :plugins [[lein-cloverage "1.2.2"]
-            [jonase/eastwood "0.3.14" :exclusions [org.clojure/clojure]]]
+  :plugins [[lein-cloverage "1.2.4"]
+            [jonase/eastwood "1.4.3" :exclusions [org.clojure/clojure]]]
 
   :eastwood {:exclude-linters
              [;; clj-kondo will catch the wrong-arity cases
@@ -14,9 +14,9 @@
               :wrong-arity]}
 
   :profiles {:dev {:dependencies [[org.clojure/clojure "1.10.2"]
-                                  [lambdaisland/kaocha "0.0-601"]
-                                  [lambdaisland/kaocha-cloverage "0.0-41"]
-                                  [lambdaisland/kaocha-junit-xml "0.0-70"]]}}
+                                  [lambdaisland/kaocha "1.91.1392"]
+                                  [lambdaisland/kaocha-cloverage "1.1.89"]
+                                  [lambdaisland/kaocha-junit-xml "1.17.101"]]}}
 
   :aliases {"test"    ["run" "-m" "kaocha.runner"
                        "--no-randomize"]
