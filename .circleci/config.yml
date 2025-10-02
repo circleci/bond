@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  snyk-vuln-scanner: cci-internal/snyk-vuln-scanner@dev:358b903c2dbd7ddc1a8f2e17d398f0908724f44c
+
 jobs:
   clj-kondo:
     docker:
@@ -50,6 +53,22 @@ jobs:
       - run:
           name: Publish to clojars
           command: lein deploy
+  snyk-test:
+    docker:
+      - image: cimg/circleci/openjdk
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - clj-jars-v2-{{ checksum "project.clj" }}
+            - clj-jars-v2-
+#      - run:
+#          name: Download dependencies
+#          command: lein deps
+#      - run:
+#          name: Pom
+#          command: lein pom
+
 
 workflows:
   version: 2
@@ -69,3 +88,8 @@ workflows:
               only: /.*/
             branches:
               ignore: /.*/
+  snyk-test:
+    jobs:
+      - snyk-vuln-scanner/vuln-scan:
+          context: [org-global, github-readonly]
+          debug: true
