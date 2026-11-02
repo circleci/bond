@@ -1,5 +1,9 @@
 {
-  "extends": ["config:recommended"],
+  "extends": [
+    "local>circleci/renovate-config",
+    "local>circleci/renovate-config:automerge"
+  ],
+  "timezone": "Europe/London",
   "schedule": "on sunday",
   "separateMajorMinor": false,
   "labels": ["renovate"],
