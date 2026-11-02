@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   clj-kondo:
     docker:
-      - image: cljkondo/clj-kondo:2026.10.20
+      - image: cljkondo/clj-kondo:2026.10.26
     steps:
       - checkout
       - run: clj-kondo --lint .
